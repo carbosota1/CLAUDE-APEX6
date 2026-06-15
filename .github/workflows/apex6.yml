@@ -4,14 +4,7 @@ on:
   push:
     paths-ignore:
       - '**'
-  schedule:
-    # Horarios en UTC. Santo Domingo (RD) = UTC-4 (sin horario de verano).
-    - cron: "30 15 * * *"  # 11:30 AM RD — backfill / chequeo temprano
-    - cron: "15 16 * * *"  # 12:15 PM RD — después de Quiniela La Primera (12:00)
-    - cron: "15 17 * * *"  # 1:15 PM RD  — después de Anguila 1PM (13:00)
-    - cron: "45 18 * * *"  # 2:45 PM RD  — después de Lotería Nacional Gana Más (14:30)
-    - cron: "15 22 * * *"  # 6:15 PM RD  — después de Anguila 6PM (18:00)
-    - cron: "20 1 * * *"   # 9:20 PM RD  — después de Anguila 9PM y Nacional Noche (21:00)
+      
   workflow_dispatch:
     inputs:
       force_notify:
