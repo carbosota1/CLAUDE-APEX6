@@ -1,0 +1,40 @@
+{
+  "generated_at": "2026-06-14T20:22:30.819934-04:00",
+  "event_key": "2026-06-14|La Nacional|Loteria Nacional- Noche",
+  "date": "2026-06-14",
+  "picks": [
+    {
+      "lottery": "Anguilla",
+      "draw": "Anguila 9PM",
+      "time_rd": "2026-06-14 21:00",
+      "categoria": "NUCLEO",
+      "decision": "❌ NO JUGAR",
+      "topq": [
+        "70",
+        "68",
+        "66"
+      ],
+      "top12": [
+        "70",
+        "68",
+        "66",
+        "51",
+        "19",
+        "92",
+        "64",
+        "73",
+        "72",
+        "71",
+        "69",
+        "67"
+      ],
+      "pales": [
+        "68-70",
+        "66-70",
+        "51-70"
+      ],
+      "best_signal": 0.0,
+      "best_a11": 0
+    }
+  ]
+}
