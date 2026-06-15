@@ -1188,19 +1188,35 @@ def main() -> None:
         print("[OK] runner finished")
         return
 
-    # 5) Sin updates nuevos y sin test → no spam
-    if not updated_today and not FORCE_NOTIFY:
-        print("[INFO] Sin nuevos updates hoy — skip análisis.")
+    # 5) Calcular el próximo target ANTES de decidir si se salta el análisis.
+    #
+    #    Esto es necesario porque "Quiniela La Primera" (12:00) es el primer
+    #    sorteo del día en el SCHEDULE de APEX6 — no hay ningún sorteo previo
+    #    que dispare "updated_today" antes de su hora. Sin este chequeo, la
+    #    corrida de las 11:30 (cuando aún nada está "due") se saltaría por
+    #    completo y el pick de La Primera nunca se generaría/enviaría.
+    nxt = next_targets_same_time()
+
+    if not updated_today and nxt is None and not FORCE_NOTIFY:
+        print("[INFO] Sin nuevos updates hoy y sin targets próximos — skip análisis.")
         save_state(state)
         print("[OK] runner finished")
         return
 
     # 6) Event key
-    if FORCE_NOTIFY and not updated_today:
-        event_key = f"{today_str()}|TEST|NO-UPDATE"
-    else:
+    if updated_today:
         last_event = sorted(updated_today, key=draw_datetime_today)[-1]
         event_key = f"{today_str()}|{last_event['lottery']}|{last_event['draw']}"
+    elif nxt is not None:
+        # Caso "pre-sorteo": aún no se actualizó nada hoy, pero hay un target
+        # próximo dentro de la ventana (típicamente la corrida temprana antes
+        # de Quiniela La Primera).
+        _, pre_targets = nxt
+        labels = "+".join(sorted(f"{t['lottery']}|{t['draw']}" for t in pre_targets))
+        event_key = f"{today_str()}|PRE|{labels}"
+    else:
+        # FORCE_NOTIFY=1 sin updates ni targets próximos hoy (prueba manual).
+        event_key = f"{today_str()}|TEST|NO-UPDATE"
 
     if state.get("last_event_key") == event_key and not FORCE_NOTIFY:
         print("[INFO] Evento ya procesado — skip.")
@@ -1216,8 +1232,7 @@ def main() -> None:
         print("[OK] runner finished")
         return
 
-    nxt = next_targets_same_time()
-    if not nxt:
+    if nxt is None:
         print("[INFO] Sin targets próximos.")
         state["last_event_key"] = event_key
         save_state(state)
