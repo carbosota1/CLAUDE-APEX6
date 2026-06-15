@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-06-14T20:26:06.577712-04:00",
+  "generated_at": "2026-06-14T20:33:01.960159-04:00",
   "event_key": "2026-06-14|TEST|NO-UPDATE",
   "items": [
     {
-      "generated_at": "2026-06-14T20:26:04.260477-04:00",
+      "generated_at": "2026-06-14T20:33:01.224008-04:00",
       "event_key": "2026-06-14|TEST|NO-UPDATE",
       "target": {
         "time_rd": "2026-06-14 21:00",
@@ -16,38 +16,38 @@
         "draw": "Anguila 9PM",
         "categoria": "NUCLEO",
         "top12": [
-          "70",
-          "68",
-          "66",
-          "51",
-          "19",
-          "92",
-          "64",
-          "73",
-          "72",
-          "71",
-          "69",
-          "67"
+          "59",
+          "52",
+          "57",
+          "33",
+          "37",
+          "12",
+          "15",
+          "46",
+          "32",
+          "41",
+          "48",
+          "43"
         ],
         "topq": [
-          "70",
-          "68",
-          "66"
+          "59",
+          "52",
+          "57"
         ],
         "pales": [
-          "68-70",
-          "66-70",
-          "51-70"
+          "52-59",
+          "57-59",
+          "33-59"
         ],
-        "fingerprint": "1639884ca8386a54",
+        "fingerprint": "63fa90895382e231",
         "decision": "❌ NO JUGAR",
-        "best_signal": 0.0,
-        "best_a11": 0,
+        "best_signal": 0.025379509144970575,
+        "best_a11": 5,
         "debug": {
           "today_observed_nums": 15,
           "source_pairs_today": 5,
-          "source_rows_hist_used": 30,
-          "top12_overlap_prev": 12,
+          "source_rows_hist_used": 2400,
+          "top12_overlap_prev": 0,
           "top_intraday": [
             [
               "84",
