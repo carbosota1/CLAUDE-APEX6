@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-06-15T18:19:18.032129-04:00",
-  "event_key": "2026-06-15|Anguilla|Anguila 6PM",
+  "generated_at": "2026-06-15T19:37:27.079370-04:00",
+  "event_key": "2026-06-15|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
   "items": [
     {
-      "generated_at": "2026-06-15T18:19:12.909310-04:00",
-      "event_key": "2026-06-15|Anguilla|Anguila 6PM",
+      "generated_at": "2026-06-15T19:37:21.321057-04:00",
+      "event_key": "2026-06-15|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
       "target": {
         "time_rd": "2026-06-15 21:00",
         "lottery": "Anguilla",
@@ -18,28 +18,28 @@
         "top12": [
           "27",
           "34",
-          "12",
-          "94",
           "24",
           "62",
-          "79",
+          "12",
           "28",
           "18",
+          "94",
+          "03",
           "42",
           "76",
-          "03"
+          "79"
         ],
         "topq": [
           "27",
           "34",
-          "12"
+          "24"
         ],
         "pales": [
           "27-34",
-          "12-27",
-          "27-94"
+          "24-27",
+          "27-62"
         ],
-        "fingerprint": "7204c1cfe46e1a9b",
+        "fingerprint": "9b1d4013fcdffaa7",
         "decision": "✅ JUGAR — NÚCLEO",
         "best_signal": 0.010580109390276897,
         "best_a11": 4,
@@ -47,7 +47,7 @@
           "today_observed_nums": 12,
           "source_pairs_today": 4,
           "source_rows_hist_used": 1836,
-          "top12_overlap_prev": 1,
+          "top12_overlap_prev": 4,
           "top_intraday": [
             [
               "94",
@@ -74,8 +74,8 @@
       }
     },
     {
-      "generated_at": "2026-06-15T18:19:18.020231-04:00",
-      "event_key": "2026-06-15|Anguilla|Anguila 6PM",
+      "generated_at": "2026-06-15T19:37:26.353960-04:00",
+      "event_key": "2026-06-15|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
       "target": {
         "time_rd": "2026-06-15 21:00",
         "lottery": "La Nacional",
@@ -87,30 +87,30 @@
         "draw": "Loteria Nacional- Noche",
         "categoria": "VIGILANCIA",
         "top12": [
-          "14",
           "50",
+          "14",
           "70",
-          "94",
+          "79",
           "07",
           "38",
           "13",
           "00",
-          "79",
-          "80",
+          "94",
           "27",
+          "80",
           "12"
         ],
         "topq": [
-          "14",
           "50",
+          "14",
           "70"
         ],
         "pales": [
           "14-50",
-          "14-70",
-          "14-94"
+          "50-70",
+          "50-79"
         ],
-        "fingerprint": "33fca1e1cf4175d8",
+        "fingerprint": "5a87b7150db3ab44",
         "decision": "❌ NO JUGAR",
         "best_signal": 0.002751290809183176,
         "best_a11": 2,
