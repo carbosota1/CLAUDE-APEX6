@@ -12,8 +12,10 @@
     "2026-06-13|La Nacional|Loteria Nacional- Gana Más": "done",
     "2026-06-13|La Nacional|Loteria Nacional- Noche": "done"
   },
-  "last_event_key": "2026-06-14|La Nacional|Loteria Nacional- Noche",
-  "sent_by_target_fp": {},
+  "last_event_key": "2026-06-14|TEST|NO-UPDATE",
+  "sent_by_target_fp": {
+    "2026-06-14 21:00|Anguilla|Anguila 9PM": "1639884ca8386a54"
+  },
   "last_wait_key": "",
   "last_top12": [
     "70",

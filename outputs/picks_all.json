@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-06-14T20:22:30.819533-04:00",
-  "event_key": "2026-06-14|La Nacional|Loteria Nacional- Noche",
+  "generated_at": "2026-06-14T20:26:06.577712-04:00",
+  "event_key": "2026-06-14|TEST|NO-UPDATE",
   "items": [
     {
-      "generated_at": "2026-06-14T20:22:30.805251-04:00",
-      "event_key": "2026-06-14|La Nacional|Loteria Nacional- Noche",
+      "generated_at": "2026-06-14T20:26:04.260477-04:00",
+      "event_key": "2026-06-14|TEST|NO-UPDATE",
       "target": {
         "time_rd": "2026-06-14 21:00",
         "lottery": "Anguilla",
@@ -47,7 +47,7 @@
           "today_observed_nums": 15,
           "source_pairs_today": 5,
           "source_rows_hist_used": 30,
-          "top12_overlap_prev": 0,
+          "top12_overlap_prev": 12,
           "top_intraday": [
             [
               "84",
