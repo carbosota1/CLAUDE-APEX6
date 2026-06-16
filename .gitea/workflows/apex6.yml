@@ -6,7 +6,7 @@ on:
       - '**'
   schedule:
     # Horarios en UTC. Santo Domingo (RD) = UTC-4 (sin horario de verano).
-    - cron: "30 15 * * *"  # 11:30 AM RD — backfill / chequeo temprano
+    - cron: "30 14 * * *"  # 11:30 AM RD — backfill / chequeo temprano
     - cron: "15 16 * * *"  # 12:15 PM RD — después de Quiniela La Primera (12:00)
     - cron: "15 17 * * *"  # 1:15 PM RD  — después de Anguila 1PM (13:00)
     - cron: "45 18 * * *"  # 2:45 PM RD  — después de Lotería Nacional Gana Más (14:30)
