@@ -36,21 +36,22 @@
     "2026-06-15 21:00|La Nacional|Loteria Nacional- Noche": "5a87b7150db3ab44",
     "2026-06-16 12:00|La Primera|Quiniela La Primera": "845230ef76d1a8ca",
     "2026-06-16 14:30|La Nacional|Loteria Nacional- Gana Más": "8ef387969ecd1efc",
-    "2026-06-16 18:00|Anguilla|Anguila 6PM": "0b4c60e6decdb5fc"
+    "2026-06-16 18:00|Anguilla|Anguila 6PM": "0b4c60e6decdb5fc",
+    "2026-06-17 12:00|La Primera|Quiniela La Primera": "cf3376006db08b8f"
   },
   "last_wait_key": "",
   "last_top12": [
-    "37",
     "43",
+    "37",
+    "22",
+    "93",
     "53",
+    "83",
     "90",
+    "14",
+    "54",
     "06",
     "17",
-    "51",
-    "83",
-    "54",
-    "14",
-    "22",
-    "93"
+    "51"
   ]
 }

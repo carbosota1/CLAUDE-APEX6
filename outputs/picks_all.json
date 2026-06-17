@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-06-17T10:32:10.348306-04:00",
+  "generated_at": "2026-06-17T11:16:34.659262-04:00",
   "event_key": "2026-06-17|PRE|La Primera|Quiniela La Primera",
   "items": [
     {
-      "generated_at": "2026-06-17T10:32:10.334683-04:00",
+      "generated_at": "2026-06-17T11:16:33.949612-04:00",
       "event_key": "2026-06-17|PRE|La Primera|Quiniela La Primera",
       "target": {
         "time_rd": "2026-06-17 12:00",
@@ -16,30 +16,30 @@
         "draw": "Quiniela La Primera",
         "categoria": "NUCLEO",
         "top12": [
-          "37",
           "43",
+          "37",
+          "22",
+          "93",
           "53",
+          "83",
           "90",
+          "14",
+          "54",
           "06",
           "17",
-          "51",
-          "83",
-          "54",
-          "14",
-          "22",
-          "93"
+          "51"
         ],
         "topq": [
-          "37",
           "43",
-          "53"
+          "37",
+          "22"
         ],
         "pales": [
           "37-43",
-          "37-53",
-          "37-90"
+          "22-43",
+          "43-93"
         ],
-        "fingerprint": "c8bcc2e94f6e68fb",
+        "fingerprint": "cf3376006db08b8f",
         "decision": "❌ NO JUGAR",
         "best_signal": 0.03408565320812124,
         "best_a11": 6,
@@ -47,7 +47,7 @@
           "today_observed_nums": 0,
           "source_pairs_today": 0,
           "source_rows_hist_used": 2790,
-          "top12_overlap_prev": 2,
+          "top12_overlap_prev": 12,
           "top_intraday": []
         }
       }
