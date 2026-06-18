@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-06-18T18:19:06.411779-04:00",
-  "event_key": "2026-06-18|Anguilla|Anguila 6PM",
+  "generated_at": "2026-06-18T18:28:13.160616-04:00",
+  "event_key": "2026-06-18|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
   "items": [
     {
-      "generated_at": "2026-06-18T18:19:01.338972-04:00",
-      "event_key": "2026-06-18|Anguilla|Anguila 6PM",
+      "generated_at": "2026-06-18T18:28:07.431532-04:00",
+      "event_key": "2026-06-18|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
       "target": {
         "time_rd": "2026-06-18 21:00",
         "lottery": "Anguilla",
@@ -18,28 +18,28 @@
         "top12": [
           "46",
           "97",
-          "05",
-          "67",
           "26",
-          "63",
+          "67",
+          "87",
           "69",
           "24",
           "28",
           "83",
-          "87",
-          "43"
+          "43",
+          "05",
+          "63"
         ],
         "topq": [
           "46",
           "97",
-          "05"
+          "26"
         ],
         "pales": [
           "46-97",
-          "05-46",
+          "26-46",
           "46-67"
         ],
-        "fingerprint": "2042e96e742e4390",
+        "fingerprint": "faba6fba32bb592f",
         "decision": "✅ JUGAR — NÚCLEO",
         "best_signal": 0.010885018004677784,
         "best_a11": 4,
@@ -47,7 +47,7 @@
           "today_observed_nums": 12,
           "source_pairs_today": 4,
           "source_rows_hist_used": 1768,
-          "top12_overlap_prev": 3,
+          "top12_overlap_prev": 5,
           "top_intraday": [
             [
               "05",
@@ -74,8 +74,8 @@
       }
     },
     {
-      "generated_at": "2026-06-18T18:19:06.399137-04:00",
-      "event_key": "2026-06-18|Anguilla|Anguila 6PM",
+      "generated_at": "2026-06-18T18:28:12.469781-04:00",
+      "event_key": "2026-06-18|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
       "target": {
         "time_rd": "2026-06-18 21:00",
         "lottery": "La Nacional",
@@ -90,10 +90,10 @@
           "37",
           "73",
           "67",
-          "05",
           "19",
-          "64",
+          "05",
           "26",
+          "64",
           "61",
           "90",
           "11",
@@ -108,9 +108,9 @@
         "pales": [
           "37-73",
           "37-67",
-          "05-37"
+          "19-37"
         ],
-        "fingerprint": "6eec1c3d45e976e5",
+        "fingerprint": "5b5bf525a8bdc4c7",
         "decision": "❌ NO JUGAR",
         "best_signal": 0.003125866304144553,
         "best_a11": 3,
