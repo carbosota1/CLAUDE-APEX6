@@ -43,7 +43,7 @@
     "2026-06-19|Anguilla|Anguila 9PM": "done",
     "2026-06-19|La Nacional|Loteria Nacional- Noche": "done"
   },
-  "last_event_key": "2026-06-19|La Nacional|Loteria Nacional- Noche",
+  "last_event_key": "2026-06-20|PRE|La Primera|Quiniela La Primera",
   "sent_by_target_fp": {
     "2026-06-14 21:00|Anguilla|Anguila 9PM": "63fa90895382e231",
     "2026-06-15 12:00|La Primera|Quiniela La Primera": "ddec8473db1bc9e9",
@@ -70,17 +70,17 @@
   },
   "last_wait_key": "",
   "last_top12": [
-    "22",
-    "54",
-    "84",
-    "87",
-    "29",
-    "42",
-    "68",
-    "61",
+    "43",
     "37",
+    "75",
+    "85",
+    "34",
+    "98",
+    "14",
+    "27",
+    "26",
+    "18",
     "52",
-    "88",
-    "11"
+    "93"
   ]
 }
