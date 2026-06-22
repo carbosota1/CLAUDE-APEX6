@@ -55,9 +55,10 @@
     "2026-06-21|La Nacional|Loteria Nacional- Noche": "done",
     "2026-06-21|Anguilla|Anguila 9PM": "done",
     "2026-06-22|La Primera|Quiniela La Primera": "done",
-    "2026-06-22|Anguilla|Anguila 1PM": "done"
+    "2026-06-22|Anguilla|Anguila 1PM": "done",
+    "2026-06-22|La Nacional|Loteria Nacional- Gana Más": "done"
   },
-  "last_event_key": "2026-06-22|Anguilla|Anguila 1PM",
+  "last_event_key": "2026-06-22|La Nacional|Loteria Nacional- Gana Más",
   "sent_by_target_fp": {
     "2026-06-14 21:00|Anguilla|Anguila 9PM": "63fa90895382e231",
     "2026-06-15 12:00|La Primera|Quiniela La Primera": "ddec8473db1bc9e9",
@@ -91,21 +92,22 @@
     "2026-06-21 18:00|Anguilla|Anguila 6PM": "63b5a16648e98b19",
     "2026-06-21 18:00|La Nacional|Loteria Nacional- Noche": "091f6fba3daac743",
     "2026-06-22 13:00|Anguilla|Anguila 1PM": "10b1322df1487edb",
-    "2026-06-22 14:30|La Nacional|Loteria Nacional- Gana Más": "eeecb90e7211c8e6"
+    "2026-06-22 14:30|La Nacional|Loteria Nacional- Gana Más": "eeecb90e7211c8e6",
+    "2026-06-22 18:00|Anguilla|Anguila 6PM": "f287d6c5303e4c42"
   },
   "last_wait_key": "",
   "last_top12": [
-    "04",
-    "45",
-    "13",
-    "49",
-    "70",
+    "93",
+    "43",
+    "87",
+    "92",
+    "39",
+    "19",
+    "88",
+    "54",
+    "71",
+    "26",
     "46",
-    "42",
-    "98",
-    "91",
-    "40",
-    "89",
-    "82"
+    "91"
   ]
 }
