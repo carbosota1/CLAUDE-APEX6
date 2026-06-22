@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-06-22T14:46:42.503539-04:00",
-  "event_key": "2026-06-22|La Nacional|Loteria Nacional- Gana Más",
+  "generated_at": "2026-06-22T18:19:12.193537-04:00",
+  "event_key": "2026-06-22|Anguilla|Anguila 6PM",
   "items": [
     {
-      "generated_at": "2026-06-22T14:46:41.748851-04:00",
-      "event_key": "2026-06-22|La Nacional|Loteria Nacional- Gana Más",
+      "generated_at": "2026-06-22T18:19:07.197609-04:00",
+      "event_key": "2026-06-22|Anguilla|Anguila 6PM",
       "target": {
-        "time_rd": "2026-06-22 18:00",
+        "time_rd": "2026-06-22 21:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 6PM"
+        "draw": "Anguila 9PM"
       },
       "best_play": {
-        "time_rd": "2026-06-22 18:00",
+        "time_rd": "2026-06-22 21:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 6PM",
+        "draw": "Anguila 9PM",
         "categoria": "NUCLEO",
         "top12": [
-          "93",
-          "43",
+          "07",
+          "52",
+          "21",
+          "70",
           "87",
-          "92",
-          "39",
-          "19",
-          "88",
-          "54",
-          "71",
-          "26",
-          "46",
-          "91"
+          "90",
+          "34",
+          "03",
+          "63",
+          "18",
+          "76",
+          "83"
         ],
         "topq": [
-          "93",
-          "43",
-          "87"
+          "07",
+          "52",
+          "21"
         ],
         "pales": [
-          "43-93",
-          "87-93",
-          "92-93"
+          "07-52",
+          "07-21",
+          "07-70"
         ],
-        "fingerprint": "f287d6c5303e4c42",
-        "decision": "✅ JUGAR — NÚCLEO",
-        "best_signal": 0.02425275985523125,
-        "best_a11": 3,
+        "fingerprint": "ad6c0aaae07d5a7c",
+        "decision": "❌ NO JUGAR",
+        "best_signal": 0.00735923609292709,
+        "best_a11": 4,
         "debug": {
-          "today_observed_nums": 8,
-          "source_pairs_today": 3,
-          "source_rows_hist_used": 1584,
-          "top12_overlap_prev": 2,
+          "today_observed_nums": 11,
+          "source_pairs_today": 4,
+          "source_rows_hist_used": 1667,
+          "top12_overlap_prev": 1,
           "top_intraday": [
             [
               "07",
@@ -62,11 +62,82 @@
               1
             ],
             [
-              "16",
+              "77",
               1
             ],
             [
-              "52",
+              "89",
+              1
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "generated_at": "2026-06-22T18:19:11.525624-04:00",
+      "event_key": "2026-06-22|Anguilla|Anguila 6PM",
+      "target": {
+        "time_rd": "2026-06-22 21:00",
+        "lottery": "La Nacional",
+        "draw": "Loteria Nacional- Noche"
+      },
+      "best_play": {
+        "time_rd": "2026-06-22 21:00",
+        "lottery": "La Nacional",
+        "draw": "Loteria Nacional- Noche",
+        "categoria": "VIGILANCIA",
+        "top12": [
+          "51",
+          "21",
+          "07",
+          "08",
+          "87",
+          "52",
+          "70",
+          "29",
+          "28",
+          "61",
+          "11",
+          "37"
+        ],
+        "topq": [
+          "51",
+          "21",
+          "07"
+        ],
+        "pales": [
+          "21-51",
+          "07-51",
+          "08-51"
+        ],
+        "fingerprint": "a9f3e01aee10a59a",
+        "decision": "🔍 JUGAR — VIGILANCIA",
+        "best_signal": 0.005860431292779892,
+        "best_a11": 3,
+        "debug": {
+          "today_observed_nums": 11,
+          "source_pairs_today": 4,
+          "source_rows_hist_used": 1667,
+          "top12_overlap_prev": 5,
+          "top_intraday": [
+            [
+              "07",
+              2
+            ],
+            [
+              "08",
+              1
+            ],
+            [
+              "87",
+              1
+            ],
+            [
+              "77",
+              1
+            ],
+            [
+              "89",
               1
             ]
           ]
