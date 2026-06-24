@@ -81,7 +81,7 @@ CATEGORY: dict[tuple[str, str], str] = {
 }
 
 THRESHOLDS: dict[str, dict[str, float]] = {
-    "NUCLEO":     {"a11_min": 2, "a11_max": 4, "signal_min": 0.009, "signal_max": 0.029},
+    "NUCLEO":     {"a11_min": 2, "a11_max": 5, "signal_min": 0.009, "signal_max": 0.029},
     "VIGILANCIA": {"a11_min": 2, "a11_max": 4, "signal_min": 0.005, "signal_max": 0.035},
 }
 
