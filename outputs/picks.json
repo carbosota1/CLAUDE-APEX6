@@ -1,40 +1,40 @@
 {
-  "generated_at": "2026-06-25T13:19:07.661320-04:00",
-  "event_key": "2026-06-25|Anguilla|Anguila 1PM",
+  "generated_at": "2026-06-25T17:45:11.991521-04:00",
+  "event_key": "2026-06-25|La Nacional|Loteria Nacional- Gana Más",
   "date": "2026-06-25",
   "picks": [
     {
-      "lottery": "La Nacional",
-      "draw": "Loteria Nacional- Gana Más",
-      "time_rd": "2026-06-25 14:30",
+      "lottery": "Anguilla",
+      "draw": "Anguila 6PM",
+      "time_rd": "2026-06-25 18:00",
       "categoria": "NUCLEO",
       "decision": "✅ JUGAR — NÚCLEO",
       "topq": [
-        "07",
-        "33",
-        "04"
+        "93",
+        "43",
+        "66"
       ],
       "top12": [
-        "07",
-        "33",
-        "04",
-        "86",
-        "32",
-        "67",
-        "12",
-        "49",
-        "70",
-        "91",
-        "62",
-        "89"
+        "93",
+        "43",
+        "66",
+        "02",
+        "13",
+        "00",
+        "39",
+        "92",
+        "81",
+        "88",
+        "03",
+        "42"
       ],
       "pales": [
-        "07-33",
-        "04-07",
-        "07-86"
+        "43-93",
+        "66-93",
+        "02-93"
       ],
-      "best_signal": 0.015472584170338794,
-      "best_a11": 2
+      "best_signal": 0.02660708043469542,
+      "best_a11": 3
     }
   ]
 }
