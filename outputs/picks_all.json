@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-06-28T10:32:12.723757-04:00",
+  "generated_at": "2026-06-28T11:03:49.116204-04:00",
   "event_key": "2026-06-28|PRE|La Primera|Quiniela La Primera",
   "items": [
     {
-      "generated_at": "2026-06-28T10:32:12.706833-04:00",
+      "generated_at": "2026-06-28T11:03:48.403986-04:00",
       "event_key": "2026-06-28|PRE|La Primera|Quiniela La Primera",
       "target": {
         "time_rd": "2026-06-28 12:00",
@@ -21,13 +21,13 @@
           "52",
           "92",
           "07",
-          "06",
+          "14",
           "89",
           "98",
           "70",
-          "14",
-          "65",
-          "18"
+          "06",
+          "18",
+          "65"
         ],
         "topq": [
           "43",
@@ -39,7 +39,7 @@
           "43-52",
           "43-92"
         ],
-        "fingerprint": "809d220e02c5f961",
+        "fingerprint": "5628c138f91c4ee4",
         "decision": "❌ NO JUGAR",
         "best_signal": 0.04698372793424469,
         "best_a11": 6,
@@ -47,7 +47,7 @@
           "today_observed_nums": 0,
           "source_pairs_today": 0,
           "source_rows_hist_used": 2724,
-          "top12_overlap_prev": 0,
+          "top12_overlap_prev": 12,
           "top_intraday": []
         }
       }
