@@ -1,123 +1,52 @@
 {
-  "generated_at": "2026-06-28T14:47:38.160578-04:00",
-  "event_key": "2026-06-28|La Nacional|Loteria Nacional- Gana Más",
+  "generated_at": "2026-06-28T18:20:31.954151-04:00",
+  "event_key": "2026-06-28|La Nacional|Loteria Nacional- Noche",
   "items": [
     {
-      "generated_at": "2026-06-28T14:47:32.061343-04:00",
-      "event_key": "2026-06-28|La Nacional|Loteria Nacional- Gana Más",
+      "generated_at": "2026-06-28T18:20:31.242282-04:00",
+      "event_key": "2026-06-28|La Nacional|Loteria Nacional- Noche",
       "target": {
-        "time_rd": "2026-06-28 18:00",
+        "time_rd": "2026-06-28 21:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 6PM"
+        "draw": "Anguila 9PM"
       },
       "best_play": {
-        "time_rd": "2026-06-28 18:00",
+        "time_rd": "2026-06-28 21:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 6PM",
+        "draw": "Anguila 9PM",
         "categoria": "NUCLEO",
         "top12": [
-          "93",
-          "43",
-          "88",
+          "59",
+          "06",
+          "12",
           "46",
-          "13",
-          "39",
-          "51",
-          "92",
+          "57",
+          "41",
+          "48",
+          "69",
+          "63",
+          "81",
           "03",
-          "75",
-          "33",
-          "73"
-        ],
-        "topq": [
-          "93",
-          "43",
-          "88"
-        ],
-        "pales": [
-          "43-93",
-          "88-93",
-          "46-93"
-        ],
-        "fingerprint": "c86d11db9cb09cae",
-        "decision": "✅ JUGAR — NÚCLEO",
-        "best_signal": 0.02535977264124353,
-        "best_a11": 3,
-        "debug": {
-          "today_observed_nums": 9,
-          "source_pairs_today": 3,
-          "source_rows_hist_used": 1590,
-          "top12_overlap_prev": 0,
-          "top_intraday": [
-            [
-              "62",
-              1
-            ],
-            [
-              "06",
-              1
-            ],
-            [
-              "16",
-              1
-            ],
-            [
-              "27",
-              1
-            ],
-            [
-              "89",
-              1
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "generated_at": "2026-06-28T14:47:37.477887-04:00",
-      "event_key": "2026-06-28|La Nacional|Loteria Nacional- Gana Más",
-      "target": {
-        "time_rd": "2026-06-28 18:00",
-        "lottery": "La Nacional",
-        "draw": "Loteria Nacional- Noche"
-      },
-      "best_play": {
-        "time_rd": "2026-06-28 18:00",
-        "lottery": "La Nacional",
-        "draw": "Loteria Nacional- Noche",
-        "categoria": "VIGILANCIA",
-        "top12": [
-          "71",
-          "50",
-          "84",
-          "37",
-          "17",
-          "34",
-          "76",
-          "22",
-          "52",
-          "04",
-          "42",
-          "73"
-        ],
-        "topq": [
-          "71",
-          "50",
           "84"
         ],
-        "pales": [
-          "50-71",
-          "71-84",
-          "37-71"
+        "topq": [
+          "59",
+          "06",
+          "12"
         ],
-        "fingerprint": "f67e33ad441d4ca2",
-        "decision": "🔍 JUGAR — VIGILANCIA",
-        "best_signal": 0.020214111000514363,
-        "best_a11": 3,
+        "pales": [
+          "06-59",
+          "12-59",
+          "46-59"
+        ],
+        "fingerprint": "b2766e705ad886ba",
+        "decision": "✅ JUGAR — NÚCLEO",
+        "best_signal": 0.018587071196055925,
+        "best_a11": 5,
         "debug": {
-          "today_observed_nums": 9,
-          "source_pairs_today": 3,
-          "source_rows_hist_used": 1590,
+          "today_observed_nums": 15,
+          "source_pairs_today": 5,
+          "source_rows_hist_used": 2400,
           "top12_overlap_prev": 1,
           "top_intraday": [
             [
@@ -133,11 +62,11 @@
               1
             ],
             [
-              "27",
+              "19",
               1
             ],
             [
-              "89",
+              "13",
               1
             ]
           ]
