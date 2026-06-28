@@ -1,73 +1,40 @@
 {
-  "generated_at": "2026-06-27T20:15:29.646781-04:00",
-  "event_key": "2026-06-27|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
-  "date": "2026-06-27",
+  "generated_at": "2026-06-28T10:32:12.724173-04:00",
+  "event_key": "2026-06-28|PRE|La Primera|Quiniela La Primera",
+  "date": "2026-06-28",
   "picks": [
     {
-      "lottery": "Anguilla",
-      "draw": "Anguila 9PM",
-      "time_rd": "2026-06-27 21:00",
+      "lottery": "La Primera",
+      "draw": "Quiniela La Primera",
+      "time_rd": "2026-06-28 12:00",
       "categoria": "NUCLEO",
       "decision": "❌ NO JUGAR",
       "topq": [
-        "50",
-        "51",
-        "45"
+        "43",
+        "93",
+        "52"
       ],
       "top12": [
-        "50",
-        "51",
-        "45",
-        "59",
-        "97",
-        "48",
-        "90",
-        "69",
-        "18",
+        "43",
+        "93",
         "52",
-        "39",
-        "83"
+        "92",
+        "07",
+        "06",
+        "89",
+        "98",
+        "70",
+        "14",
+        "65",
+        "18"
       ],
       "pales": [
-        "50-51",
-        "45-50",
-        "50-59"
+        "43-93",
+        "43-52",
+        "43-92"
       ],
-      "best_signal": 0.0011824344763235748,
-      "best_a11": 2
-    },
-    {
-      "lottery": "La Nacional",
-      "draw": "Loteria Nacional- Noche",
-      "time_rd": "2026-06-27 21:00",
-      "categoria": "VIGILANCIA",
-      "decision": "❌ NO JUGAR",
-      "topq": [
-        "38",
-        "47",
-        "85"
-      ],
-      "top12": [
-        "38",
-        "47",
-        "85",
-        "42",
-        "51",
-        "59",
-        "84",
-        "71",
-        "87",
-        "03",
-        "13",
-        "45"
-      ],
-      "pales": [
-        "38-47",
-        "38-85",
-        "38-42"
-      ],
-      "best_signal": 0.001995442480299879,
-      "best_a11": 3
+      "best_signal": 0.04698372793424469,
+      "best_a11": 6
     }
   ]
 }
