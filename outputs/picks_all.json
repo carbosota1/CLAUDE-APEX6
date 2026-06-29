@@ -1,52 +1,52 @@
 {
-  "generated_at": "2026-06-29T14:47:14.721834-04:00",
-  "event_key": "2026-06-29|La Nacional|Loteria Nacional- Gana Más",
+  "generated_at": "2026-06-29T18:18:37.834354-04:00",
+  "event_key": "2026-06-29|Anguilla|Anguila 6PM",
   "items": [
     {
-      "generated_at": "2026-06-29T14:47:13.963337-04:00",
-      "event_key": "2026-06-29|La Nacional|Loteria Nacional- Gana Más",
+      "generated_at": "2026-06-29T18:18:32.658859-04:00",
+      "event_key": "2026-06-29|Anguilla|Anguila 6PM",
       "target": {
-        "time_rd": "2026-06-29 18:00",
+        "time_rd": "2026-06-29 21:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 6PM"
+        "draw": "Anguila 9PM"
       },
       "best_play": {
-        "time_rd": "2026-06-29 18:00",
+        "time_rd": "2026-06-29 21:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 6PM",
+        "draw": "Anguila 9PM",
         "categoria": "NUCLEO",
         "top12": [
-          "93",
-          "43",
+          "86",
+          "32",
+          "12",
+          "49",
+          "33",
+          "21",
+          "22",
+          "29",
           "23",
           "92",
-          "13",
-          "39",
-          "19",
-          "51",
-          "88",
-          "66",
-          "46",
-          "87"
+          "47",
+          "48"
         ],
         "topq": [
-          "93",
-          "43",
-          "23"
+          "86",
+          "32",
+          "12"
         ],
         "pales": [
-          "43-93",
-          "23-93",
-          "92-93"
+          "32-86",
+          "12-86",
+          "49-86"
         ],
-        "fingerprint": "c50c85a0420b2533",
-        "decision": "✅ JUGAR — NÚCLEO",
-        "best_signal": 0.02535977264124353,
-        "best_a11": 3,
+        "fingerprint": "b57ada73b411da60",
+        "decision": "❌ NO JUGAR",
+        "best_signal": 0.005115077564401774,
+        "best_a11": 2,
         "debug": {
-          "today_observed_nums": 9,
-          "source_pairs_today": 3,
-          "source_rows_hist_used": 1593,
+          "today_observed_nums": 12,
+          "source_pairs_today": 4,
+          "source_rows_hist_used": 1806,
           "top12_overlap_prev": 2,
           "top_intraday": [
             [
@@ -62,11 +62,82 @@
               1
             ],
             [
-              "22",
+              "21",
               1
             ],
             [
-              "23",
+              "49",
+              1
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "generated_at": "2026-06-29T18:18:37.116452-04:00",
+      "event_key": "2026-06-29|Anguilla|Anguila 6PM",
+      "target": {
+        "time_rd": "2026-06-29 21:00",
+        "lottery": "La Nacional",
+        "draw": "Loteria Nacional- Noche"
+      },
+      "best_play": {
+        "time_rd": "2026-06-29 21:00",
+        "lottery": "La Nacional",
+        "draw": "Loteria Nacional- Noche",
+        "categoria": "VIGILANCIA",
+        "top12": [
+          "40",
+          "17",
+          "21",
+          "35",
+          "32",
+          "23",
+          "95",
+          "38",
+          "55",
+          "26",
+          "80",
+          "48"
+        ],
+        "topq": [
+          "40",
+          "17",
+          "21"
+        ],
+        "pales": [
+          "17-40",
+          "21-40",
+          "35-40"
+        ],
+        "fingerprint": "cbc114d538df6f3b",
+        "decision": "🔍 JUGAR — VIGILANCIA",
+        "best_signal": 0.005461004460459945,
+        "best_a11": 4,
+        "debug": {
+          "today_observed_nums": 12,
+          "source_pairs_today": 4,
+          "source_rows_hist_used": 1806,
+          "top12_overlap_prev": 4,
+          "top_intraday": [
+            [
+              "33",
+              1
+            ],
+            [
+              "32",
+              1
+            ],
+            [
+              "92",
+              1
+            ],
+            [
+              "21",
+              1
+            ],
+            [
+              "49",
               1
             ]
           ]
