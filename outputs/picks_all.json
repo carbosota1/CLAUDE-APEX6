@@ -1,146 +1,54 @@
 {
-  "generated_at": "2026-07-01T18:18:32.098443-04:00",
-  "event_key": "2026-07-01|Anguilla|Anguila 6PM",
+  "generated_at": "2026-07-02T11:36:05.958556-04:00",
+  "event_key": "2026-07-02|PRE|La Primera|Quiniela La Primera",
   "items": [
     {
-      "generated_at": "2026-07-01T18:18:27.129379-04:00",
-      "event_key": "2026-07-01|Anguilla|Anguila 6PM",
+      "generated_at": "2026-07-02T11:36:05.941341-04:00",
+      "event_key": "2026-07-02|PRE|La Primera|Quiniela La Primera",
       "target": {
-        "time_rd": "2026-07-01 21:00",
-        "lottery": "Anguilla",
-        "draw": "Anguila 9PM"
+        "time_rd": "2026-07-02 12:00",
+        "lottery": "La Primera",
+        "draw": "Quiniela La Primera"
       },
       "best_play": {
-        "time_rd": "2026-07-01 21:00",
-        "lottery": "Anguilla",
-        "draw": "Anguila 9PM",
+        "time_rd": "2026-07-02 12:00",
+        "lottery": "La Primera",
+        "draw": "Quiniela La Primera",
         "categoria": "NUCLEO",
         "top12": [
-          "41",
-          "86",
-          "72",
-          "38",
-          "40",
-          "47",
-          "48",
+          "37",
+          "43",
+          "93",
+          "71",
           "76",
-          "83",
+          "82",
+          "07",
+          "49",
+          "77",
           "88",
-          "63",
-          "52"
-        ],
-        "topq": [
-          "41",
-          "86",
-          "72"
-        ],
-        "pales": [
-          "41-86",
-          "41-72",
-          "38-41"
-        ],
-        "fingerprint": "4fe6333071ea40e9",
-        "decision": "❌ NO JUGAR",
-        "best_signal": 0.00494351705111438,
-        "best_a11": 2,
-        "debug": {
-          "today_observed_nums": 12,
-          "source_pairs_today": 4,
-          "source_rows_hist_used": 1829,
-          "top12_overlap_prev": 4,
-          "top_intraday": [
-            [
-              "51",
-              1
-            ],
-            [
-              "02",
-              1
-            ],
-            [
-              "88",
-              1
-            ],
-            [
-              "41",
-              1
-            ],
-            [
-              "40",
-              1
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "generated_at": "2026-07-01T18:18:31.409059-04:00",
-      "event_key": "2026-07-01|Anguilla|Anguila 6PM",
-      "target": {
-        "time_rd": "2026-07-01 21:00",
-        "lottery": "La Nacional",
-        "draw": "Loteria Nacional- Noche"
-      },
-      "best_play": {
-        "time_rd": "2026-07-01 21:00",
-        "lottery": "La Nacional",
-        "draw": "Loteria Nacional- Noche",
-        "categoria": "VIGILANCIA",
-        "top12": [
-          "40",
-          "74",
-          "91",
-          "38",
           "72",
-          "19",
-          "90",
-          "61",
-          "13",
-          "79",
-          "86",
           "14"
         ],
         "topq": [
-          "40",
-          "74",
-          "91"
+          "37",
+          "43",
+          "93"
         ],
         "pales": [
-          "40-74",
-          "40-91",
-          "38-40"
+          "37-43",
+          "37-93",
+          "37-71"
         ],
-        "fingerprint": "25124ca3fc331b45",
-        "decision": "🔍 JUGAR — VIGILANCIA",
-        "best_signal": 0.007732824173395741,
-        "best_a11": 4,
+        "fingerprint": "91a0e665dc108611",
+        "decision": "❌ NO JUGAR",
+        "best_signal": 0.044339771913043134,
+        "best_a11": 6,
         "debug": {
-          "today_observed_nums": 12,
-          "source_pairs_today": 4,
-          "source_rows_hist_used": 1829,
-          "top12_overlap_prev": 4,
-          "top_intraday": [
-            [
-              "51",
-              1
-            ],
-            [
-              "02",
-              1
-            ],
-            [
-              "88",
-              1
-            ],
-            [
-              "41",
-              1
-            ],
-            [
-              "40",
-              1
-            ]
-          ]
+          "today_observed_nums": 0,
+          "source_pairs_today": 0,
+          "source_rows_hist_used": 2700,
+          "top12_overlap_prev": 2,
+          "top_intraday": []
         }
       }
     }
