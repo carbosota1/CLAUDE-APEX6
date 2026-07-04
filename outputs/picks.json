@@ -1,39 +1,72 @@
 {
-  "generated_at": "2026-07-04T14:47:20.647105-04:00",
-  "event_key": "2026-07-04|La Nacional|Loteria Nacional- Gana Más",
+  "generated_at": "2026-07-04T18:19:14.805718-04:00",
+  "event_key": "2026-07-04|Anguilla|Anguila 6PM",
   "date": "2026-07-04",
   "picks": [
     {
       "lottery": "Anguilla",
-      "draw": "Anguila 6PM",
-      "time_rd": "2026-07-04 18:00",
+      "draw": "Anguila 9PM",
+      "time_rd": "2026-07-04 21:00",
       "categoria": "NUCLEO",
-      "decision": "✅ JUGAR — NÚCLEO",
+      "decision": "❌ NO JUGAR",
       "topq": [
-        "93",
-        "43",
-        "88"
+        "27",
+        "85",
+        "18"
       ],
       "top12": [
-        "93",
-        "43",
-        "88",
-        "22",
-        "46",
-        "47",
-        "38",
-        "51",
-        "63",
-        "79",
-        "45",
-        "49"
+        "27",
+        "85",
+        "18",
+        "64",
+        "69",
+        "00",
+        "33",
+        "15",
+        "96",
+        "80",
+        "76",
+        "88"
       ],
       "pales": [
-        "43-93",
-        "88-93",
-        "22-93"
+        "27-85",
+        "18-27",
+        "27-64"
       ],
-      "best_signal": 0.02530849637438744,
+      "best_signal": 0.005500702937753033,
+      "best_a11": 4
+    },
+    {
+      "lottery": "La Nacional",
+      "draw": "Loteria Nacional- Noche",
+      "time_rd": "2026-07-04 21:00",
+      "categoria": "VIGILANCIA",
+      "decision": "🔍 JUGAR — VIGILANCIA",
+      "topq": [
+        "31",
+        "42",
+        "00"
+      ],
+      "top12": [
+        "31",
+        "42",
+        "00",
+        "85",
+        "09",
+        "05",
+        "11",
+        "71",
+        "63",
+        "22",
+        "69",
+        "80"
+      ],
+      "pales": [
+        "31-42",
+        "00-31",
+        "31-85"
+      ],
+      "best_signal": 0.007605197623019105,
       "best_a11": 3
     }
   ]
