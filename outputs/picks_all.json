@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-07-11T18:19:21.195967-04:00",
-  "event_key": "2026-07-11|Anguilla|Anguila 6PM",
+  "generated_at": "2026-07-11T19:19:19.428810-04:00",
+  "event_key": "2026-07-11|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
   "items": [
     {
-      "generated_at": "2026-07-11T18:19:16.806492-04:00",
-      "event_key": "2026-07-11|Anguilla|Anguila 6PM",
+      "generated_at": "2026-07-11T19:19:13.564909-04:00",
+      "event_key": "2026-07-11|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
       "target": {
         "time_rd": "2026-07-11 21:00",
         "lottery": "Anguilla",
@@ -16,30 +16,30 @@
         "draw": "Anguila 9PM",
         "categoria": "NUCLEO",
         "top12": [
+          "43",
           "54",
-          "57",
           "89",
           "63",
-          "81",
-          "43",
+          "10",
+          "57",
           "28",
           "18",
           "55",
-          "06",
           "83",
-          "10"
+          "81",
+          "06"
         ],
         "topq": [
+          "43",
           "54",
-          "57",
           "89"
         ],
         "pales": [
-          "54-57",
-          "54-89",
-          "54-63"
+          "43-54",
+          "43-89",
+          "43-63"
         ],
-        "fingerprint": "cb7141d979af1c00",
+        "fingerprint": "ca904c1b9673f6b1",
         "decision": "❌ NO JUGAR",
         "best_signal": 0.004298500013539624,
         "best_a11": 3,
@@ -47,7 +47,7 @@
           "today_observed_nums": 12,
           "source_pairs_today": 4,
           "source_rows_hist_used": 1887,
-          "top12_overlap_prev": 3,
+          "top12_overlap_prev": 4,
           "top_intraday": [
             [
               "52",
@@ -74,8 +74,8 @@
       }
     },
     {
-      "generated_at": "2026-07-11T18:19:21.178298-04:00",
-      "event_key": "2026-07-11|Anguilla|Anguila 6PM",
+      "generated_at": "2026-07-11T19:19:18.707636-04:00",
+      "event_key": "2026-07-11|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
       "target": {
         "time_rd": "2026-07-11 21:00",
         "lottery": "La Nacional",
@@ -87,8 +87,8 @@
         "draw": "Loteria Nacional- Noche",
         "categoria": "VIGILANCIA",
         "top12": [
-          "16",
           "87",
+          "16",
           "25",
           "57",
           "81",
@@ -101,16 +101,16 @@
           "06"
         ],
         "topq": [
-          "16",
           "87",
+          "16",
           "25"
         ],
         "pales": [
           "16-87",
-          "16-25",
-          "16-57"
+          "25-87",
+          "57-87"
         ],
-        "fingerprint": "8f5111dd0bb83d74",
+        "fingerprint": "9750c7a5d21d36c4",
         "decision": "❌ NO JUGAR",
         "best_signal": 0.0028743333035339148,
         "best_a11": 2,
