@@ -1,39 +1,39 @@
 {
-  "generated_at": "2026-07-22T12:18:54.192106-04:00",
-  "event_key": "2026-07-22|La Primera|Quiniela La Primera",
+  "generated_at": "2026-07-22T13:19:16.291532-04:00",
+  "event_key": "2026-07-22|Anguilla|Anguila 1PM",
   "date": "2026-07-22",
   "picks": [
     {
-      "lottery": "Anguilla",
-      "draw": "Anguila 1PM",
-      "time_rd": "2026-07-22 13:00",
+      "lottery": "La Nacional",
+      "draw": "Loteria Nacional- Gana Más",
+      "time_rd": "2026-07-22 14:30",
       "categoria": "NUCLEO",
       "decision": "✅ JUGAR — NÚCLEO",
       "topq": [
-        "37",
-        "57",
-        "47"
+        "89",
+        "07",
+        "19"
       ],
       "top12": [
-        "37",
-        "57",
-        "47",
-        "77",
-        "29",
-        "62",
-        "82",
-        "33",
-        "08",
-        "79",
-        "26",
+        "89",
+        "07",
+        "19",
+        "99",
+        "87",
+        "25",
+        "42",
+        "18",
+        "14",
+        "51",
+        "20",
         "12"
       ],
       "pales": [
-        "37-57",
-        "37-47",
-        "37-77"
+        "07-89",
+        "19-89",
+        "89-99"
       ],
-      "best_signal": 0.015686861527821835,
+      "best_signal": 0.019265205576651425,
       "best_a11": 2
     }
   ]
