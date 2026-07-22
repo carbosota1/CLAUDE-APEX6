@@ -1,54 +1,67 @@
 {
-  "generated_at": "2026-07-22T10:31:55.861186-04:00",
-  "event_key": "2026-07-22|PRE|La Primera|Quiniela La Primera",
+  "generated_at": "2026-07-22T12:18:54.191192-04:00",
+  "event_key": "2026-07-22|La Primera|Quiniela La Primera",
   "items": [
     {
-      "generated_at": "2026-07-22T10:31:55.840697-04:00",
-      "event_key": "2026-07-22|PRE|La Primera|Quiniela La Primera",
+      "generated_at": "2026-07-22T12:18:53.426514-04:00",
+      "event_key": "2026-07-22|La Primera|Quiniela La Primera",
       "target": {
-        "time_rd": "2026-07-22 12:00",
-        "lottery": "La Primera",
-        "draw": "Quiniela La Primera"
+        "time_rd": "2026-07-22 13:00",
+        "lottery": "Anguilla",
+        "draw": "Anguila 1PM"
       },
       "best_play": {
-        "time_rd": "2026-07-22 12:00",
-        "lottery": "La Primera",
-        "draw": "Quiniela La Primera",
+        "time_rd": "2026-07-22 13:00",
+        "lottery": "Anguilla",
+        "draw": "Anguila 1PM",
         "categoria": "NUCLEO",
         "top12": [
-          "93",
-          "50",
-          "80",
-          "19",
-          "30",
-          "59",
-          "90",
+          "37",
+          "57",
+          "47",
+          "77",
+          "29",
+          "62",
+          "82",
+          "33",
+          "08",
           "79",
-          "85",
-          "12",
           "26",
-          "07"
+          "12"
         ],
         "topq": [
-          "93",
-          "50",
-          "80"
+          "37",
+          "57",
+          "47"
         ],
         "pales": [
-          "50-93",
-          "80-93",
-          "19-93"
+          "37-57",
+          "37-47",
+          "37-77"
         ],
-        "fingerprint": "920c4a24e735c4b2",
-        "decision": "❌ NO JUGAR",
-        "best_signal": 0.04698372793424469,
-        "best_a11": 3,
+        "fingerprint": "60a41b052f30d941",
+        "decision": "✅ JUGAR — NÚCLEO",
+        "best_signal": 0.015686861527821835,
+        "best_a11": 2,
         "debug": {
-          "today_observed_nums": 0,
-          "source_pairs_today": 0,
-          "source_rows_hist_used": 2580,
-          "top12_overlap_prev": 1,
-          "top_intraday": []
+          "today_observed_nums": 3,
+          "source_pairs_today": 1,
+          "source_rows_hist_used": 534,
+          "top12_overlap_prev": 3,
+          "top_intraday": [
+            [
+              "67",
+              1
+            ],
+            [
+              "53",
+              1
+            ],
+            [
+              "24",
+              1
+            ]
+          ]
         }
       }
     }
