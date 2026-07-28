@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-07-28T18:17:27.664382-04:00",
-  "event_key": "2026-07-28|Anguilla|Anguila 6PM",
+  "generated_at": "2026-07-28T19:03:12.649395-04:00",
+  "event_key": "2026-07-28|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
   "items": [
     {
-      "generated_at": "2026-07-28T18:17:22.280736-04:00",
-      "event_key": "2026-07-28|Anguilla|Anguila 6PM",
+      "generated_at": "2026-07-28T19:03:06.636716-04:00",
+      "event_key": "2026-07-28|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
       "target": {
         "time_rd": "2026-07-28 21:00",
         "lottery": "Anguilla",
@@ -16,29 +16,29 @@
         "draw": "Anguila 9PM",
         "top12": [
           "80",
-          "19",
           "47",
+          "28",
           "78",
           "90",
           "06",
           "76",
+          "55",
           "83",
           "24",
-          "55",
           "42",
-          "28"
+          "19"
         ],
         "topq": [
           "80",
-          "19",
-          "47"
+          "47",
+          "28"
         ],
         "pales": [
-          "19-80",
           "47-80",
+          "28-80",
           "78-80"
         ],
-        "fingerprint": "ee2abc810572230c",
+        "fingerprint": "d00a016dde6ce04c",
         "decision": "❌ NO JUGAR",
         "best_signal": 0.0062571689047792225,
         "best_a11": 4,
@@ -46,7 +46,7 @@
           "today_observed_nums": 12,
           "source_pairs_today": 4,
           "source_rows_hist_used": 1881,
-          "top12_overlap_prev": 2,
+          "top12_overlap_prev": 3,
           "top_intraday": [
             [
               "89",
@@ -73,8 +73,8 @@
       }
     },
     {
-      "generated_at": "2026-07-28T18:17:26.932146-04:00",
-      "event_key": "2026-07-28|Anguilla|Anguila 6PM",
+      "generated_at": "2026-07-28T19:03:11.905297-04:00",
+      "event_key": "2026-07-28|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
       "target": {
         "time_rd": "2026-07-28 21:00",
         "lottery": "La Nacional",
@@ -91,8 +91,8 @@
           "19",
           "80",
           "47",
-          "17",
           "05",
+          "17",
           "14",
           "03",
           "84",
@@ -108,8 +108,8 @@
           "37-89",
           "19-37"
         ],
-        "fingerprint": "9c83691a8d690d0a",
-        "decision": "✅ JUGAR",
+        "fingerprint": "76a302cc3c3d9ade",
+        "decision": "❌ NO JUGAR",
         "best_signal": 0.0030661820279193636,
         "best_a11": 2,
         "debug": {

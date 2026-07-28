@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-07-28T18:17:27.665072-04:00",
-  "event_key": "2026-07-28|Anguilla|Anguila 6PM",
+  "generated_at": "2026-07-28T19:03:12.650495-04:00",
+  "event_key": "2026-07-28|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
   "date": "2026-07-28",
   "picks": [
     {
@@ -10,26 +10,26 @@
       "decision": "❌ NO JUGAR",
       "topq": [
         "80",
-        "19",
-        "47"
+        "47",
+        "28"
       ],
       "top12": [
         "80",
-        "19",
         "47",
+        "28",
         "78",
         "90",
         "06",
         "76",
+        "55",
         "83",
         "24",
-        "55",
         "42",
-        "28"
+        "19"
       ],
       "pales": [
-        "19-80",
         "47-80",
+        "28-80",
         "78-80"
       ],
       "best_signal": 0.0062571689047792225,
@@ -39,7 +39,7 @@
       "lottery": "La Nacional",
       "draw": "Loteria Nacional- Noche",
       "time_rd": "2026-07-28 21:00",
-      "decision": "✅ JUGAR",
+      "decision": "❌ NO JUGAR",
       "topq": [
         "37",
         "99",
@@ -52,8 +52,8 @@
         "19",
         "80",
         "47",
-        "17",
         "05",
+        "17",
         "14",
         "03",
         "84",
