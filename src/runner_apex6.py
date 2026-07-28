@@ -1,15 +1,20 @@
 """
 runner_apex6.py — Orquestador principal del sistema APEX6.
 
-v2 — Cambios vs. v1:
-  1. classify_pick() reemplazado por umbrales POR LOTERÍA calibrados con
-     datos reales propios de APEX6 (44 días, 255 sorteos).
-  2. Tres niveles de decisión:
-       🔥 SEÑAL ÓPTIMA  — rango peak de esa lotería (mayor hit rate)
-       ✅ JUGAR          — dentro del rango válido
-       ❌ NO JUGAR       — fuera de rango (se registra, NO se envía a Telegram)
-  3. La Primera habilitada: sus umbrales reales son a11=6, signal>0.030
-     (estaba siendo bloqueada incorrectamente por el filtro global anterior).
+v3 — Umbrales recalibrados sorteo por sorteo con datos propios de APEX6
+     (44 días, 255 sorteos reales, julio 2026):
+
+     🔥 SEÑAL ÓPTIMA: rango peak de cada sorteo — 42.0% hit (n=69)
+     ✅ JUGAR:         rango válido ampliado    — 32.9% hit (n=85)
+     ❌ NO JUGAR:      fuera de rango           — no notifica
+
+     Cambios vs v2:
+     - Anguila 1PM:   optimo estrecho a sig 0.015-0.020 (peak real)
+     - Anguila 6PM:   a11=3 eliminado del rango válido (0% hit); solo a11=2
+     - Anguila 9PM:   sweet spot confirmado en sig 0.005-0.015
+     - La Primera:    a11=3 eliminado (23.1%); solo a11=6 notifica
+     - Gana Más:      optimo estrecho a sig 0.010-0.015 (41.7% peak)
+     - Nac. Noche:    a11=2 y a11=4 eliminados; solo a11=3 notifica
 """
 from __future__ import annotations
 
@@ -35,12 +40,10 @@ from telegram import send_telegram
 # Rutas
 # ---------------------------------------------------------------------------
 TZ = ZoneInfo("America/Santo_Domingo")
-
-DATA_DIR  = "data"
-HIST_DIR  = os.path.join(DATA_DIR, "histories")
+DATA_DIR   = "data"
+HIST_DIR   = os.path.join(DATA_DIR, "histories")
 STATE_PATH = os.path.join(DATA_DIR, "state.json")
-OUT_DIR   = "outputs"
-
+OUT_DIR    = "outputs"
 SYSTEM_NAME = "APEX6"
 
 XLSX_FILES: dict[str, str] = {
@@ -50,66 +53,77 @@ XLSX_FILES: dict[str, str] = {
 }
 
 # ---------------------------------------------------------------------------
-# Umbrales POR LOTERÍA/SORTEO — calibrados con datos propios de APEX6
-# (44 días, 255 sorteos, julio 2026)
+# Umbrales POR SORTEO — calibrados con 255 sorteos propios de APEX6
 #
-# Estructura: draw_name -> {
-#   "optimo":  (a11_vals, sig_min, sig_max)   <- 🔥 SEÑAL ÓPTIMA
-#   "valido":  (a11_vals, sig_min, sig_max)   <- ✅ JUGAR
-# }
+# optimo → 🔥 SEÑAL ÓPTIMA (rango peak, mayor hit rate)
+# valido → ✅ JUGAR         (rango aceptable)
+#
+# Evidencia:
+#   Anguila 1PM   optimo: a11=2, sig 0.015-0.020 → 40.0% (n=10)
+#                 valido: a11=2-3, sig 0.015-0.030 → 34-40%
+#   Anguila 6PM   optimo: a11=2, sig 0.015-0.020 → 33.3% (n=6)
+#                 a11=3 excluido — 0% hit en todos sus rangos
+#   Anguila 9PM   optimo: a11=2-3, sig 0.005-0.015 → 33.3% (n=9)
+#   La Primera    optimo: a11=6, sig >0.040 → 45.8% (n=24)
+#                 a11=3 excluido — 23.1% hit (por debajo del azar)
+#   Gana Más      optimo: a11=2, sig 0.010-0.015 → 41.7% (n=12)
+#                 valido: a11=2, sig 0.010-0.020 → 29.2% (aceptable)
+#   Nac. Noche    optimo: a11=3, sig 0.005-0.010 → 57.1% (n=7) ← mejor del sistema
+#                 a11=2 y a11=4 excluidos — ambos 0-12.5% hit
 # ---------------------------------------------------------------------------
 DRAW_THRESHOLDS: dict[str, dict] = {
     "Anguila 1PM": {
-        "optimo": ([2],    0.015, 0.025),   # 45.5% hit (n=11)
-        "valido": ([2, 3], 0.010, 0.030),   # cubre rango ampliado
+        "optimo": ([2],    0.015, 0.020),
+        "valido": ([2, 3], 0.015, 0.030),
     },
     "Anguila 6PM": {
-        "optimo": ([2, 3], 0.010, 0.020),   # 42.9% hit (n=7)
-        "valido": ([2, 3], 0.005, 0.025),
+        "optimo": ([2],    0.015, 0.020),
+        "valido": ([2],    0.010, 0.025),
     },
     "Anguila 9PM": {
-        "optimo": ([3],    0.000, 0.015),   # 33.3% hit (n=9)
-        "valido": ([2, 3], 0.000, 0.020),
+        "optimo": ([2, 3], 0.005, 0.015),
+        "valido": ([2, 3], 0.000, 0.015),
     },
     "Quiniela La Primera": {
-        "optimo": ([6],    0.030, 9.999),   # 43.3% hit (n=30) — signal naturalmente alto
-        "valido": ([3, 6], 0.020, 9.999),   # ampliar para no perder sorteos
+        "optimo": ([6],    0.040, 9.999),
+        "valido": ([6],    0.030, 9.999),
     },
     "Loteria Nacional- Gana Más": {
-        "optimo": ([2],    0.010, 0.020),   # 41.7% hit (n=12)
-        "valido": ([2, 3], 0.008, 0.025),
+        "optimo": ([2],    0.010, 0.015),
+        "valido": ([2],    0.010, 0.020),
     },
     "Loteria Nacional- Noche": {
-        "optimo": ([3],    0.000, 0.010),   # 42.9% hit (n=14)
-        "valido": ([2, 3], 0.000, 0.015),
+        "optimo": ([3],    0.005, 0.010),
+        "valido": ([3],    0.000, 0.010),
     },
 }
 
 
 def classify_pick(draw: str, best_signal: float | None, best_a11: int | None) -> str:
     """
-    Devuelve la decisión para este sorteo según umbrales calibrados por lotería.
+    Clasifica un pick según los umbrales calibrados por sorteo.
 
     Retorna:
-        "🔥 SEÑAL ÓPTIMA"
-        "✅ JUGAR"
-        "❌ NO JUGAR"
+        "🔥 SEÑAL ÓPTIMA"  — rango peak de ese sorteo
+        "✅ JUGAR"          — rango válido
+        "❌ NO JUGAR"       — fuera de rango (no se notifica)
     """
     th = DRAW_THRESHOLDS.get(draw)
     if th is None:
-        return "❌ NO JUGAR"  # sorteo fuera del sistema
+        return "❌ NO JUGAR"
 
     bs = best_signal if best_signal is not None else 0.0
-    ba = best_a11 if best_a11 is not None else 0
+    ba = best_a11    if best_a11    is not None else 0
 
-    a11_opt, sig_min_opt, sig_max_opt = th["optimo"]
-    a11_val, sig_min_val, sig_max_val = th["valido"]
+    a11_o, sm_o, sx_o = th["optimo"]
+    a11_v, sm_v, sx_v = th["valido"]
 
-    if ba in a11_opt and sig_min_opt <= bs <= sig_max_opt:
+    if ba in a11_o and sm_o <= bs <= sx_o:
         return "🔥 SEÑAL ÓPTIMA"
-    if ba in a11_val and sig_min_val <= bs <= sig_max_val:
+    if ba in a11_v and sm_v <= bs <= sx_v:
         return "✅ JUGAR"
     return "❌ NO JUGAR"
+
 
 # ---------------------------------------------------------------------------
 # Schedule
@@ -117,22 +131,22 @@ def classify_pick(draw: str, best_signal: float | None, best_a11: int | None) ->
 UPDATE_AFTER = 2
 
 SCHEDULE: list[dict] = [
-    {"lottery": "Anguilla",    "draw": "Anguila 1PM",                  "time": "13:00", "update_after_minutes": UPDATE_AFTER},
-    {"lottery": "Anguilla",    "draw": "Anguila 6PM",                  "time": "18:00", "update_after_minutes": UPDATE_AFTER},
-    {"lottery": "Anguilla",    "draw": "Anguila 9PM",                  "time": "21:00", "update_after_minutes": UPDATE_AFTER},
-    {"lottery": "La Primera",  "draw": "Quiniela La Primera",          "time": "12:00", "update_after_minutes": UPDATE_AFTER},
-    {"lottery": "La Nacional", "draw": "Loteria Nacional- Gana Más",   "time": "14:30", "update_after_minutes": UPDATE_AFTER},
-    {"lottery": "La Nacional", "draw": "Loteria Nacional- Noche",      "time": "21:00", "update_after_minutes": UPDATE_AFTER},
+    {"lottery": "Anguilla",    "draw": "Anguila 1PM",                 "time": "13:00", "update_after_minutes": UPDATE_AFTER},
+    {"lottery": "Anguilla",    "draw": "Anguila 6PM",                 "time": "18:00", "update_after_minutes": UPDATE_AFTER},
+    {"lottery": "Anguilla",    "draw": "Anguila 9PM",                 "time": "21:00", "update_after_minutes": UPDATE_AFTER},
+    {"lottery": "La Primera",  "draw": "Quiniela La Primera",         "time": "12:00", "update_after_minutes": UPDATE_AFTER},
+    {"lottery": "La Nacional", "draw": "Loteria Nacional- Gana Más",  "time": "14:30", "update_after_minutes": UPDATE_AFTER},
+    {"lottery": "La Nacional", "draw": "Loteria Nacional- Noche",     "time": "21:00", "update_after_minutes": UPDATE_AFTER},
 ]
 
 # ---------------------------------------------------------------------------
 # Parámetros de salida
 # ---------------------------------------------------------------------------
 TOPK_QUINIELA = 3
-TOPK_FULL = 12
-PALES_OUT = 3
+TOPK_FULL     = 12
+PALES_OUT     = 3
 
-LOOKAHEAD_MINUTES = 5 * 60
+LOOKAHEAD_MINUTES      = 5 * 60
 UPCOMING_GRACE_SECONDS = 10 * 60
 
 FORCE_NOTIFY: bool = os.getenv("FORCE_NOTIFY", "0").strip() == "1"
@@ -140,14 +154,14 @@ FORCE_NOTIFY: bool = os.getenv("FORCE_NOTIFY", "0").strip() == "1"
 # ---------------------------------------------------------------------------
 # Fuente histórica
 # ---------------------------------------------------------------------------
-MIN_SOURCE_ROWS = 1500
-MAX_SOURCE_ROWS = 2400
-RECENT_DAYS_CAP = 180
-FIRST_TARGET_RECENT_DAYS = 120
+MIN_SOURCE_ROWS           = 1500
+MAX_SOURCE_ROWS           = 2400
+RECENT_DAYS_CAP           = 180
+FIRST_TARGET_RECENT_DAYS  = 120
 MIN_OBS_FOR_STRICT_NUM_MASK = 5
 
 # ---------------------------------------------------------------------------
-# Pesos del score (idénticos a runner33 / v1)
+# Pesos del score
 # ---------------------------------------------------------------------------
 SIGNAL_WEIGHT = 1.00
 A11_WEIGHT    = 0.10
@@ -155,20 +169,20 @@ A11_WEIGHT    = 0.10
 TOP12_REPEAT_THRESHOLD = 8
 OBS_PENALTY_PER_NUM    = 0.008
 
-FAKE_SIGNAL_PENALTY  = 0.35
-REPEAT_PENALTY       = 0.25
-HOT_NUM_BOOST        = 0.15
-INTRADAY_HIT_BOOST   = 0.08
-POWER_COMBO_BOOST    = 0.25
-FRESH_NUM_BOOST      = 0.05
-HIGH_SIGNAL_PENALTY  = 0.10
+FAKE_SIGNAL_PENALTY   = 0.35
+REPEAT_PENALTY        = 0.25
+HOT_NUM_BOOST         = 0.15
+INTRADAY_HIT_BOOST    = 0.08
+POWER_COMBO_BOOST     = 0.25
+FRESH_NUM_BOOST       = 0.05
+HIGH_SIGNAL_PENALTY   = 0.10
 HIGH_SIGNAL_NOISE_CAP = 0.030
 
 RECENT_LOG_WINDOW    = 80
 FREQ_PENALTY_PER_HIT = 0.0012
 MAX_RECENT_FREQ      = 2
 
-NO_PLAY_OBS_THRESHOLD = 99  # prácticamente desactivado
+NO_PLAY_OBS_THRESHOLD = 99
 
 # ===========================================================================
 # Helpers
@@ -185,8 +199,7 @@ def _norm2(x: str) -> str:
     return s.zfill(2) if s.isdigit() else s
 
 def _norm_pair(a: str, b: str) -> str:
-    a, b = _norm2(a), _norm2(b)
-    return "-".join(sorted([a, b]))
+    return "-".join(sorted([_norm2(a), _norm2(b)]))
 
 def format_pales(pales_raw) -> list[str]:
     out, seen = [], set()
@@ -316,15 +329,15 @@ def fetch_result(lottery: str, draw: str, date: str) -> tuple[str, str, str]:
         sys.path.insert(0, scrapers_dir)
     spec = importlib.util.spec_from_file_location(f"{lottery}_scraper", file_path)
     if spec is None or spec.loader is None:
-        raise ImportError(f"No se pudo cargar el spec del scraper: {file_path}")
+        raise ImportError(f"No se pudo cargar spec: {file_path}")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)  # type: ignore[union-attr]
     if not hasattr(module, "get_result"):
-        raise AttributeError(f"El scraper {file_path} no implementa get_result(draw, date)")
+        raise AttributeError(f"Scraper sin get_result: {file_path}")
     return module.get_result(draw, date)
 
 # ===========================================================================
-# XLSX helpers (caché por sesión)
+# XLSX helpers
 # ===========================================================================
 _xlsx_cache: dict[str, pd.DataFrame] = {}
 
@@ -335,7 +348,7 @@ def _get_history_df(lottery: str) -> pd.DataFrame:
             try:
                 df = pd.read_excel(path, dtype=str)
                 df.columns = [str(c).strip().lower() for c in df.columns]
-                df["fecha"] = df["fecha"].astype(str).str[:10]
+                df["fecha"]  = df["fecha"].astype(str).str[:10]
                 df["sorteo"] = df["sorteo"].astype(str)
                 _xlsx_cache[lottery] = df
             except Exception:
@@ -418,7 +431,7 @@ def _try_update_for_date(item: dict, date_str: str, state: dict) -> bool:
         yres = _get_row_for_date(item["lottery"], item["draw"], yday)
         if yres is not None and (p1, p2, p3) == yres:
             if now_rd() < (_due_dt(item) + timedelta(minutes=90)):
-                raise RuntimeError(f"Resultado idéntico al de ayer para {item['draw']} — Skipping.")
+                raise RuntimeError(f"Resultado idéntico al de ayer — Skipping.")
     new_row = pd.DataFrame([{"fecha": date_str, "sorteo": item["draw"],
                               "primero": p1, "segundo": p2, "tercero": p3}])
     ensure_dir(HIST_DIR)
@@ -489,8 +502,7 @@ def next_targets_same_time() -> tuple[datetime, list[dict]] | None:
         return None
     candidates.sort(key=lambda x: x[0])
     dt_min = candidates[0][0]
-    same = [it for dt, it in candidates if dt == dt_min]
-    return dt_min, same
+    return dt_min, [it for dt, it in candidates if dt == dt_min]
 
 # ===========================================================================
 # Intradía
@@ -582,26 +594,21 @@ def grade_picks_from_histories() -> None:
         for p in pales:
             try:
                 a, b = str(p).split("-", 1)
-                a, b = a.strip().zfill(2), b.strip().zfill(2)
-                norm.add("-".join(sorted([a, b])))
+                norm.add("-".join(sorted([a.strip().zfill(2), b.strip().zfill(2)])))
             except Exception:
                 continue
         return len(norm & real_pairs)
 
-    perf_rows = []
-    any_graded = False
-
     def _sf(v):
-        try:
-            return float(v) if v not in (None, "", "nan") else None
-        except Exception:
-            return None
+        try: return float(v) if v not in (None, "", "nan") else None
+        except Exception: return None
 
     def _si(v):
-        try:
-            return int(float(v)) if v not in (None, "", "nan") else None
-        except Exception:
-            return None
+        try: return int(float(v)) if v not in (None, "", "nan") else None
+        except Exception: return None
+
+    perf_rows = []
+    any_graded = False
 
     for _, r in pending.iterrows():
         date_s, lottery, draw, key = r.get("date",""), r.get("lottery",""), r.get("draw",""), r.get("key","")
@@ -644,7 +651,6 @@ def grade_picks_from_histories() -> None:
             out_p.to_csv(perf_path, index=False, encoding="utf-8")
         else:
             perf_df.to_csv(perf_path, index=False, encoding="utf-8")
-
     if any_graded:
         df.to_csv(log_path, index=False, encoding="utf-8")
 
@@ -661,8 +667,7 @@ def build_exploded_history() -> pd.DataFrame | None:
     if not frames:
         return None
     exp = (pd.concat(frames, ignore_index=True)
-           .sort_values("fecha_dt")
-           .reset_index(drop=True))
+           .sort_values("fecha_dt").reset_index(drop=True))
     exp["fecha_dt"] = pd.to_datetime(exp["fecha_dt"], errors="coerce")
     return exp.dropna(subset=["fecha_dt"])
 
@@ -689,29 +694,28 @@ def analyze_target_and_maybe_notify(
         if draw_datetime_today(it).date() == target_dt.date()
         and draw_datetime_today(it) < target_dt
     }
-    obs_nums = observed_nums_today_before(target_dt)
+    obs_nums       = observed_nums_today_before(target_dt)
     intraday_counts = intraday_counter_before(target_dt)
 
     target_dt_naive = target_dt.replace(tzinfo=None)
-    ref_date = pd.Timestamp(target_dt_naive)
-    target_weekday = target_dt.weekday()
-    target_bucket = ("morning" if target_dt.hour < 14
-                     else "afternoon" if target_dt.hour < 18 else "night")
+    ref_date        = pd.Timestamp(target_dt_naive)
+    target_weekday  = target_dt.weekday()
+    target_bucket   = ("morning" if target_dt.hour < 14
+                       else "afternoon" if target_dt.hour < 18 else "night")
     last_two = get_last_two_draws(exp, target["lottery"], target["draw"], ref_date)
 
     if not prior_pairs:
-        cutoff = target_dt_naive - timedelta(days=FIRST_TARGET_RECENT_DAYS)
+        cutoff      = target_dt_naive - timedelta(days=FIRST_TARGET_RECENT_DAYS)
         recent_mask = exp["fecha_dt"] >= cutoff
 
         def src_filter_first(e, _rm=recent_mask):
             return _rm & ~((e["lottery"] == target["lottery"]) & (e["sorteo"] == target["draw"]))
 
-        rec_hist = recommend_for_target(
+        rec_hist  = recommend_for_target(
             exp, src_filter_first, target["lottery"], target["draw"],
             lag_days=0, top_n=TOPK_FULL, ref_date=ref_date,
             target_weekday=target_weekday, target_bucket=target_bucket,
-            last_two_draws=last_two,
-        )
+            last_two_draws=last_two)
         used_rows = int(recent_mask.sum())
         used_pairs = 0
     else:
@@ -729,7 +733,7 @@ def analyze_target_and_maybe_notify(
             tail_idx = exp[mask].sort_values("fecha_dt").tail(MAX_SOURCE_ROWS).index
             mask = exp.index.isin(tail_idx)
 
-        mask_idx = set(exp[mask].index)
+        mask_idx  = set(exp[mask].index)
         used_rows = len(mask_idx)
 
         if used_rows < MIN_SOURCE_ROWS:
@@ -740,22 +744,21 @@ def analyze_target_and_maybe_notify(
             if mask2.sum() > MAX_SOURCE_ROWS:
                 tail_idx2 = exp[mask2].sort_values("fecha_dt").tail(MAX_SOURCE_ROWS).index
                 mask2 = exp.index.isin(tail_idx2)
-            mask_idx = set(exp[mask2].index)
+            mask_idx  = set(exp[mask2].index)
             used_rows = len(mask_idx)
 
         if not mask_idx:
-            cutoff = target_dt_naive - timedelta(days=RECENT_DAYS_CAP)
+            cutoff      = target_dt_naive - timedelta(days=RECENT_DAYS_CAP)
             recent_mask = exp["fecha_dt"] >= cutoff
 
             def src_filter(e, _rm=recent_mask):
                 return _rm & ~((e["lottery"] == target["lottery"]) & (e["sorteo"] == target["draw"]))
 
-            rec_hist = recommend_for_target(
+            rec_hist  = recommend_for_target(
                 exp, src_filter, target["lottery"], target["draw"],
                 lag_days=0, top_n=TOPK_FULL, ref_date=ref_date,
                 target_weekday=target_weekday, target_bucket=target_bucket,
-                last_two_draws=last_two,
-            )
+                last_two_draws=last_two)
             used_rows = int(recent_mask.sum())
         else:
             rec_hist = recommend_for_target(
@@ -763,23 +766,20 @@ def analyze_target_and_maybe_notify(
                 target["lottery"], target["draw"],
                 lag_days=0, top_n=TOPK_FULL, ref_date=ref_date,
                 target_weekday=target_weekday, target_bucket=target_bucket,
-                last_two_draws=last_two,
-            )
+                last_two_draws=last_two)
 
     if rec_hist is None or rec_hist.empty:
-        print("[INFO] Datos insuficientes para calcular recomendaciones.")
+        print("[INFO] Datos insuficientes.")
         return None
 
-    # -----------------------------------------------------------------------
     # Score híbrido
-    # -----------------------------------------------------------------------
     n_obs = len(obs_nums)
     rec = rec_hist.copy()
     rec["num"]    = rec["num"].astype(str).map(_norm2)
     rec["signal"] = pd.to_numeric(rec.get("signal", 0), errors="coerce").fillna(0.0)
     rec["a11"]    = pd.to_numeric(rec.get("a11", 0), errors="coerce").fillna(0).astype(int)
 
-    rec["score"] = rec["signal"] * SIGNAL_WEIGHT + rec["a11"] * A11_WEIGHT
+    rec["score"]  = rec["signal"] * SIGNAL_WEIGHT + rec["a11"] * A11_WEIGHT
     rec["score"] += rec["num"].isin(obs_nums).astype(int) * HOT_NUM_BOOST
     rec["score"] += rec["num"].map(lambda x: intraday_counts.get(x, 0)) * INTRADAY_HIT_BOOST
     rec["score"] -= ((rec["signal"] > 0.02) & (rec["a11"] <= 2)).astype(int) * FAKE_SIGNAL_PENALTY
@@ -788,7 +788,7 @@ def analyze_target_and_maybe_notify(
     last_top12 = {_norm2(x) for x in state.get("last_top12", [])}
     rec["score"] -= rec["num"].isin(last_top12).astype(int) * REPEAT_PENALTY
 
-    recent_freq = _recent_pick_frequency()
+    recent_freq   = _recent_pick_frequency()
     rec_freq_vals = rec["num"].map(lambda x: recent_freq.get(x, 0))
     rec["score"] -= rec_freq_vals * FREQ_PENALTY_PER_HIT
     rec["score"] -= (rec_freq_vals >= MAX_RECENT_FREQ).astype(int) * 0.15
@@ -797,13 +797,13 @@ def analyze_target_and_maybe_notify(
     rec["score"] += (rec_freq_vals == 0).astype(int) * FRESH_NUM_BOOST
     rec["score"] -= n_obs * OBS_PENALTY_PER_NUM
 
-    rec = rec.sort_values(["score", "signal", "a11"], ascending=False)
+    rec   = rec.sort_values(["score", "signal", "a11"], ascending=False)
     top12 = rec["num"].tolist()[:TOPK_FULL]
 
     overlap = len(set(top12) & last_top12)
     if overlap >= TOP12_REPEAT_THRESHOLD:
         print(f"[INFO] Anti-repeat triggered overlap={overlap}")
-        rec = rec.sort_values(["a11", "signal", "score"], ascending=False)
+        rec   = rec.sort_values(["a11", "signal", "score"], ascending=False)
         top12 = rec["num"].tolist()[:TOPK_FULL]
         overlap = len(set(top12) & last_top12)
 
@@ -811,13 +811,10 @@ def analyze_target_and_maybe_notify(
     pales = format_pales(top_pales(top12[:10], 40))[:PALES_OUT]
 
     best_signal = float(rec["signal"].max()) if not rec.empty else None
-    best_a11    = int(rec["a11"].max())    if not rec.empty else None
+    best_a11    = int(rec["a11"].max())      if not rec.empty else None
 
-    # -----------------------------------------------------------------------
-    # Clasificación por lotería (v2)
-    # -----------------------------------------------------------------------
     decision = classify_pick(target["draw"], best_signal, best_a11)
-    fp = fingerprint(topq, top12, pales)
+    fp       = fingerprint(topq, top12, pales)
 
     payload = {
         "generated_at": now_rd().isoformat(),
@@ -841,7 +838,8 @@ def analyze_target_and_maybe_notify(
     }
 
     log_pick(payload)
-    _send_pick_telegram(event_key, target, target_dt, payload["best_play"], obs_nums, used_rows, state)
+    _send_pick_telegram(event_key, target, target_dt, payload["best_play"],
+                        obs_nums, used_rows, state)
     state["last_top12"] = top12
     return payload
 
@@ -850,13 +848,6 @@ def _send_pick_telegram(
     event_key: str, target: dict, target_dt: datetime,
     bp: dict, obs_nums: set, used_rows: int, state: dict | None = None,
 ) -> None:
-    """
-    Envía el mensaje de Telegram según la decisión.
-
-    - 🔥 SEÑAL ÓPTIMA → siempre notifica (nivel máximo de urgencia)
-    - ✅ JUGAR          → notifica
-    - ❌ NO JUGAR       → NO notifica (solo se registra en picks_log.csv)
-    """
     decision    = bp.get("decision", "")
     topq        = bp.get("topq", [])
     top12       = bp.get("top12", [])
@@ -866,10 +857,9 @@ def _send_pick_telegram(
     best_a11    = bp.get("best_a11")
 
     if decision == "❌ NO JUGAR" and not FORCE_NOTIFY:
-        print(f"[INFO] {target['lottery']} | {target['draw']} -> NO JUGAR (sin notificación).")
+        print(f"[INFO] {target['draw']} -> NO JUGAR (sin notificación).")
         return
 
-    # Icono de urgencia según nivel
     nivel_icono = "🔥" if "ÓPTIMA" in decision else "✅"
 
     lines = [
@@ -887,7 +877,6 @@ def _send_pick_telegram(
         lines += ["📌 Top12:", ", ".join(top12), ""]
     if pales:
         lines += [f"🎲 PALE Top{len(pales)}:", " | ".join(pales), ""]
-
     lines += [
         "📊 Debug:",
         f"best_signal={best_signal} best_a11={best_a11}",
@@ -895,16 +884,16 @@ def _send_pick_telegram(
     ]
 
     target_key = f"{bp['time_rd']}|{target['lottery']}|{target['draw']}"
-    sent_map = state.get("sent_by_target_fp", {}) if state else {}
+    sent_map   = state.get("sent_by_target_fp", {}) if state else {}
 
     if sent_map.get(target_key, "") != fp or FORCE_NOTIFY:
         send_telegram("\n".join(lines))
-        print("[OK] Telegram enviado para target.")
+        print("[OK] Telegram enviado.")
         if state is not None:
             sent_map[target_key] = fp
             state["sent_by_target_fp"] = sent_map
     else:
-        print("[INFO] Mismo fingerprint — Telegram ya enviado para este target.")
+        print("[INFO] Mismo fingerprint — ya enviado.")
 
 # ===========================================================================
 # MAIN
@@ -917,7 +906,6 @@ def main() -> None:
     state = load_state()
     updated_today: list[dict] = []
 
-    # 1) Actualización normal
     for item in SCHEDULE:
         try:
             if try_update_one(item, state):
@@ -926,20 +914,17 @@ def main() -> None:
         except Exception as e:
             print(f"[WARN] update failed {item['lottery']}|{item['draw']}: {e}")
 
-    # 2) Backfill
     try:
         state = force_refresh_backfill(state, days_back=1, max_attempts=5)
     except Exception as e:
         print(f"[WARN] force_refresh_backfill failed: {e}")
 
-    # 3) Grading
     try:
         grade_picks_from_histories()
         print("[OK] Grading completado.")
     except Exception as e:
         print(f"[WARN] grading failed: {e}")
 
-    # 4) Gate: faltan updates due de hoy
     missing_due_today = missing_due_updates_global_today()
     if missing_due_today and not FORCE_NOTIFY:
         print("[INFO] Faltan updates due hoy — skip análisis.")
@@ -948,33 +933,30 @@ def main() -> None:
         wait_key = f"{today_str()}|WAIT|{len(missing_due_today)}"
         if state.get("last_wait_key") != wait_key:
             try:
-                lines = [f"⏳ {SYSTEM_NAME} (Esperando resultados)",
-                         "No se generarán picks hasta actualizar todos los sorteos debidos.", "",
+                lines = [f"⏳ {SYSTEM_NAME} (Esperando resultados)", "",
                          "Faltan:", *[f"• {x}" for x in missing_due_today[:20]]]
                 send_telegram("\n".join(lines))
                 state["last_wait_key"] = wait_key
             except Exception as e:
-                print(f"[WARN] Telegram wait message failed: {e}")
+                print(f"[WARN] Telegram wait failed: {e}")
         save_state(state)
         print("[OK] runner finished")
         return
 
-    # 5) Calcular próximo target ANTES de decidir si saltar
     nxt = next_targets_same_time()
 
     if not updated_today and nxt is None and not FORCE_NOTIFY:
-        print("[INFO] Sin nuevos updates hoy y sin targets próximos — skip análisis.")
+        print("[INFO] Sin nuevos updates y sin targets próximos — skip.")
         save_state(state)
         print("[OK] runner finished")
         return
 
-    # 6) Event key
     if updated_today:
         last_event = sorted(updated_today, key=draw_datetime_today)[-1]
-        event_key = f"{today_str()}|{last_event['lottery']}|{last_event['draw']}"
+        event_key  = f"{today_str()}|{last_event['lottery']}|{last_event['draw']}"
     elif nxt is not None:
         _, pre_targets = nxt
-        labels = "+".join(sorted(f"{t['lottery']}|{t['draw']}" for t in pre_targets))
+        labels    = "+".join(sorted(f"{t['lottery']}|{t['draw']}" for t in pre_targets))
         event_key = f"{today_str()}|PRE|{labels}"
     else:
         event_key = f"{today_str()}|TEST|NO-UPDATE"
@@ -985,10 +967,9 @@ def main() -> None:
         print("[OK] runner finished")
         return
 
-    # 7) Historia + análisis
     exp = build_exploded_history()
     if exp is None:
-        print("[INFO] Sin historial cargado — exit.")
+        print("[INFO] Sin historial — exit.")
         save_state(state)
         print("[OK] runner finished")
         return
@@ -1010,9 +991,8 @@ def main() -> None:
             if payload:
                 picks_all.append(payload)
         except Exception as e:
-            print(f"[WARN] target analysis failed {t['lottery']}|{t['draw']}: {e}")
+            print(f"[WARN] target failed {t['lottery']}|{t['draw']}: {e}")
 
-    # 8) Outputs JSON
     ensure_dir(OUT_DIR)
     if picks_all:
         with open(os.path.join(OUT_DIR, "picks_all.json"), "w", encoding="utf-8") as f:
@@ -1043,3 +1023,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
