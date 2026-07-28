@@ -1,146 +1,54 @@
 {
-  "generated_at": "2026-07-27T18:19:18.005872-04:00",
-  "event_key": "2026-07-27|Anguilla|Anguila 6PM",
+  "generated_at": "2026-07-28T10:32:21.133482-04:00",
+  "event_key": "2026-07-28|PRE|La Primera|Quiniela La Primera",
   "items": [
     {
-      "generated_at": "2026-07-27T18:19:13.332875-04:00",
-      "event_key": "2026-07-27|Anguilla|Anguila 6PM",
+      "generated_at": "2026-07-28T10:32:21.111478-04:00",
+      "event_key": "2026-07-28|PRE|La Primera|Quiniela La Primera",
       "target": {
-        "time_rd": "2026-07-27 21:00",
-        "lottery": "Anguilla",
-        "draw": "Anguila 9PM"
+        "time_rd": "2026-07-28 12:00",
+        "lottery": "La Primera",
+        "draw": "Quiniela La Primera"
       },
       "best_play": {
-        "time_rd": "2026-07-27 21:00",
-        "lottery": "Anguilla",
-        "draw": "Anguila 9PM",
+        "time_rd": "2026-07-28 12:00",
+        "lottery": "La Primera",
+        "draw": "Quiniela La Primera",
         "categoria": "NUCLEO",
         "top12": [
-          "41",
-          "47",
-          "26",
-          "05",
-          "69",
-          "55",
-          "20",
-          "18",
-          "63",
+          "93",
+          "57",
+          "76",
           "50",
-          "88",
-          "04"
-        ],
-        "topq": [
-          "41",
+          "65",
+          "87",
+          "12",
+          "96",
+          "10",
           "47",
-          "26"
-        ],
-        "pales": [
-          "41-47",
-          "26-41",
-          "05-41"
-        ],
-        "fingerprint": "20412deed89d65d5",
-        "decision": "❌ NO JUGAR",
-        "best_signal": 0.0016685238674022539,
-        "best_a11": 2,
-        "debug": {
-          "today_observed_nums": 12,
-          "source_pairs_today": 4,
-          "source_rows_hist_used": 1968,
-          "top12_overlap_prev": 4,
-          "top_intraday": [
-            [
-              "81",
-              1
-            ],
-            [
-              "16",
-              1
-            ],
-            [
-              "82",
-              1
-            ],
-            [
-              "49",
-              1
-            ],
-            [
-              "88",
-              1
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "generated_at": "2026-07-27T18:19:17.985274-04:00",
-      "event_key": "2026-07-27|Anguilla|Anguila 6PM",
-      "target": {
-        "time_rd": "2026-07-27 21:00",
-        "lottery": "La Nacional",
-        "draw": "Loteria Nacional- Noche"
-      },
-      "best_play": {
-        "time_rd": "2026-07-27 21:00",
-        "lottery": "La Nacional",
-        "draw": "Loteria Nacional- Noche",
-        "categoria": "VIGILANCIA",
-        "top12": [
-          "77",
-          "81",
-          "49",
-          "47",
-          "11",
-          "03",
-          "84",
-          "45",
-          "38",
-          "41",
           "80",
-          "05"
+          "41"
         ],
         "topq": [
-          "77",
-          "81",
-          "49"
+          "93",
+          "57",
+          "76"
         ],
         "pales": [
-          "77-81",
-          "49-77",
-          "47-77"
+          "57-93",
+          "76-93",
+          "50-93"
         ],
-        "fingerprint": "c0b85b970df5ac73",
+        "fingerprint": "3881e168f2043544",
         "decision": "❌ NO JUGAR",
-        "best_signal": 0.002362195189361648,
-        "best_a11": 2,
+        "best_signal": 0.04698372793424469,
+        "best_a11": 3,
         "debug": {
-          "today_observed_nums": 12,
-          "source_pairs_today": 4,
-          "source_rows_hist_used": 1968,
+          "today_observed_nums": 0,
+          "source_pairs_today": 0,
+          "source_rows_hist_used": 2544,
           "top12_overlap_prev": 3,
-          "top_intraday": [
-            [
-              "81",
-              1
-            ],
-            [
-              "16",
-              1
-            ],
-            [
-              "82",
-              1
-            ],
-            [
-              "49",
-              1
-            ],
-            [
-              "88",
-              1
-            ]
-          ]
+          "top_intraday": []
         }
       }
     }
