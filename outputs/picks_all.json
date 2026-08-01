@@ -1,52 +1,52 @@
 {
-  "generated_at": "2026-08-01T14:47:28.218969-04:00",
-  "event_key": "2026-08-01|La Nacional|Loteria Nacional- Gana Más",
+  "generated_at": "2026-08-01T18:19:26.934967-04:00",
+  "event_key": "2026-08-01|Anguilla|Anguila 6PM",
   "items": [
     {
-      "generated_at": "2026-08-01T14:47:28.195712-04:00",
-      "event_key": "2026-08-01|La Nacional|Loteria Nacional- Gana Más",
+      "generated_at": "2026-08-01T18:19:21.650111-04:00",
+      "event_key": "2026-08-01|Anguilla|Anguila 6PM",
       "target": {
-        "time_rd": "2026-08-01 18:00",
+        "time_rd": "2026-08-01 21:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 6PM"
+        "draw": "Anguila 9PM"
       },
       "best_play": {
-        "time_rd": "2026-08-01 18:00",
+        "time_rd": "2026-08-01 21:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 6PM",
+        "draw": "Anguila 9PM",
         "top12": [
-          "43",
-          "22",
-          "47",
-          "20",
-          "86",
-          "38",
-          "48",
-          "59",
-          "30",
-          "26",
+          "12",
+          "69",
+          "25",
+          "40",
+          "55",
+          "68",
+          "90",
+          "83",
+          "76",
+          "89",
           "72",
-          "04"
+          "26"
         ],
         "topq": [
-          "43",
-          "22",
-          "47"
+          "12",
+          "69",
+          "25"
         ],
         "pales": [
-          "22-43",
-          "43-47",
-          "20-43"
+          "12-69",
+          "12-25",
+          "12-40"
         ],
-        "fingerprint": "857b523ff37a4d6f",
-        "decision": "❌ NO JUGAR",
-        "best_signal": 0.0202990798113849,
+        "fingerprint": "60421cedd52696ef",
+        "decision": "🔥 SEÑAL ÓPTIMA",
+        "best_signal": 0.0060440271598195105,
         "best_a11": 3,
         "debug": {
-          "today_observed_nums": 9,
-          "source_pairs_today": 3,
-          "source_rows_hist_used": 1602,
-          "top12_overlap_prev": 1,
+          "today_observed_nums": 12,
+          "source_pairs_today": 4,
+          "source_rows_hist_used": 1912,
+          "top12_overlap_prev": 2,
           "top_intraday": [
             [
               "40",
@@ -61,11 +61,81 @@
               1
             ],
             [
-              "09",
+              "70",
               1
             ],
             [
-              "25",
+              "77",
+              1
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "generated_at": "2026-08-01T18:19:26.910993-04:00",
+      "event_key": "2026-08-01|Anguilla|Anguila 6PM",
+      "target": {
+        "time_rd": "2026-08-01 21:00",
+        "lottery": "La Nacional",
+        "draw": "Loteria Nacional- Noche"
+      },
+      "best_play": {
+        "time_rd": "2026-08-01 21:00",
+        "lottery": "La Nacional",
+        "draw": "Loteria Nacional- Noche",
+        "top12": [
+          "09",
+          "77",
+          "40",
+          "25",
+          "35",
+          "95",
+          "11",
+          "61",
+          "34",
+          "38",
+          "84",
+          "90"
+        ],
+        "topq": [
+          "09",
+          "77",
+          "40"
+        ],
+        "pales": [
+          "09-77",
+          "09-40",
+          "09-25"
+        ],
+        "fingerprint": "5432aa242e935724",
+        "decision": "❌ NO JUGAR",
+        "best_signal": 0.011199007179655062,
+        "best_a11": 4,
+        "debug": {
+          "today_observed_nums": 12,
+          "source_pairs_today": 4,
+          "source_rows_hist_used": 1912,
+          "top12_overlap_prev": 3,
+          "top_intraday": [
+            [
+              "40",
+              1
+            ],
+            [
+              "36",
+              1
+            ],
+            [
+              "55",
+              1
+            ],
+            [
+              "70",
+              1
+            ],
+            [
+              "77",
               1
             ]
           ]
