@@ -1,38 +1,38 @@
 {
-  "generated_at": "2026-08-01T13:17:33.855533-04:00",
-  "event_key": "2026-08-01|PRE|La Nacional|Loteria Nacional- Gana Más",
+  "generated_at": "2026-08-01T14:47:28.219406-04:00",
+  "event_key": "2026-08-01|La Nacional|Loteria Nacional- Gana Más",
   "date": "2026-08-01",
   "picks": [
     {
-      "lottery": "La Nacional",
-      "draw": "Loteria Nacional- Gana Más",
-      "time_rd": "2026-08-01 14:30",
+      "lottery": "Anguilla",
+      "draw": "Anguila 6PM",
+      "time_rd": "2026-08-01 18:00",
       "decision": "❌ NO JUGAR",
       "topq": [
-        "07",
-        "04",
-        "19"
+        "43",
+        "22",
+        "47"
       ],
       "top12": [
-        "07",
-        "04",
-        "19",
-        "57",
-        "25",
-        "18",
-        "71",
-        "55",
-        "87",
-        "27",
-        "16",
-        "44"
+        "43",
+        "22",
+        "47",
+        "20",
+        "86",
+        "38",
+        "48",
+        "59",
+        "30",
+        "26",
+        "72",
+        "04"
       ],
       "pales": [
-        "04-07",
-        "07-19",
-        "07-57"
+        "22-43",
+        "43-47",
+        "20-43"
       ],
-      "best_signal": 0.03580898402024699,
+      "best_signal": 0.0202990798113849,
       "best_a11": 3
     }
   ]
