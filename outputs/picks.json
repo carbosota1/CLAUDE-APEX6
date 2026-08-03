@@ -1,39 +1,39 @@
 {
-  "generated_at": "2026-08-03T10:32:30.198509-04:00",
-  "event_key": "2026-08-03|PRE|La Primera|Quiniela La Primera",
+  "generated_at": "2026-08-03T12:19:19.628325-04:00",
+  "event_key": "2026-08-03|La Primera|Quiniela La Primera",
   "date": "2026-08-03",
   "picks": [
     {
-      "lottery": "La Primera",
-      "draw": "Quiniela La Primera",
-      "time_rd": "2026-08-03 12:00",
-      "decision": "❌ NO JUGAR",
+      "lottery": "Anguilla",
+      "draw": "Anguila 1PM",
+      "time_rd": "2026-08-03 13:00",
+      "decision": "✅ JUGAR",
       "topq": [
         "43",
-        "93",
-        "67"
+        "00",
+        "44"
       ],
       "top12": [
         "43",
-        "93",
-        "67",
-        "50",
-        "73",
-        "64",
-        "65",
-        "87",
-        "88",
-        "76",
-        "80",
-        "12"
+        "00",
+        "44",
+        "83",
+        "57",
+        "26",
+        "17",
+        "82",
+        "22",
+        "24",
+        "63",
+        "67"
       ],
       "pales": [
-        "43-93",
-        "43-67",
-        "43-50"
+        "00-43",
+        "43-44",
+        "43-83"
       ],
-      "best_signal": 0.05624219708715279,
-      "best_a11": 5
+      "best_signal": 0.01874942301035112,
+      "best_a11": 3
     }
   ]
 }
