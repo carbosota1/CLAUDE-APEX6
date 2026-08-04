@@ -1,52 +1,52 @@
 {
-  "generated_at": "2026-08-03T14:47:33.440030-04:00",
-  "event_key": "2026-08-03|La Nacional|Loteria Nacional- Gana Más",
+  "generated_at": "2026-08-03T20:17:01.497702-04:00",
+  "event_key": "2026-08-03|Anguilla|Anguila 6PM",
   "items": [
     {
-      "generated_at": "2026-08-03T14:47:33.416387-04:00",
-      "event_key": "2026-08-03|La Nacional|Loteria Nacional- Gana Más",
+      "generated_at": "2026-08-03T20:16:55.410602-04:00",
+      "event_key": "2026-08-03|Anguilla|Anguila 6PM",
       "target": {
-        "time_rd": "2026-08-03 18:00",
+        "time_rd": "2026-08-03 21:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 6PM"
+        "draw": "Anguila 9PM"
       },
       "best_play": {
-        "time_rd": "2026-08-03 18:00",
+        "time_rd": "2026-08-03 21:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 6PM",
+        "draw": "Anguila 9PM",
         "top12": [
-          "93",
+          "28",
+          "37",
+          "19",
+          "00",
           "48",
-          "91",
-          "23",
-          "09",
-          "03",
-          "63",
-          "30",
-          "26",
+          "70",
+          "20",
+          "02",
+          "24",
+          "76",
           "87",
-          "33",
           "04"
         ],
         "topq": [
-          "93",
-          "48",
-          "91"
+          "28",
+          "37",
+          "19"
         ],
         "pales": [
-          "48-93",
-          "91-93",
-          "23-93"
+          "28-37",
+          "19-28",
+          "00-28"
         ],
-        "fingerprint": "cb71cc5163dd95a7",
-        "decision": "❌ NO JUGAR",
-        "best_signal": 0.026549172110396646,
-        "best_a11": 3,
+        "fingerprint": "dbf6b1d2d51b97a7",
+        "decision": "🔥 SEÑAL ÓPTIMA",
+        "best_signal": 0.007165376120299977,
+        "best_a11": 2,
         "debug": {
-          "today_observed_nums": 8,
-          "source_pairs_today": 3,
-          "source_rows_hist_used": 1602,
-          "top12_overlap_prev": 2,
+          "today_observed_nums": 11,
+          "source_pairs_today": 4,
+          "source_rows_hist_used": 1693,
+          "top12_overlap_prev": 3,
           "top_intraday": [
             [
               "19",
@@ -57,15 +57,85 @@
               1
             ],
             [
-              "86",
+              "21",
               1
             ],
             [
-              "87",
+              "37",
               1
             ],
             [
-              "00",
+              "15",
+              1
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "generated_at": "2026-08-03T20:17:00.654048-04:00",
+      "event_key": "2026-08-03|Anguilla|Anguila 6PM",
+      "target": {
+        "time_rd": "2026-08-03 21:00",
+        "lottery": "La Nacional",
+        "draw": "Loteria Nacional- Noche"
+      },
+      "best_play": {
+        "time_rd": "2026-08-03 21:00",
+        "lottery": "La Nacional",
+        "draw": "Loteria Nacional- Noche",
+        "top12": [
+          "21",
+          "36",
+          "19",
+          "00",
+          "37",
+          "87",
+          "48",
+          "11",
+          "52",
+          "84",
+          "67",
+          "80"
+        ],
+        "topq": [
+          "21",
+          "36",
+          "19"
+        ],
+        "pales": [
+          "21-36",
+          "19-21",
+          "00-21"
+        ],
+        "fingerprint": "fae99f09e090a4af",
+        "decision": "✅ JUGAR",
+        "best_signal": 0.0006191053805248535,
+        "best_a11": 3,
+        "debug": {
+          "today_observed_nums": 11,
+          "source_pairs_today": 4,
+          "source_rows_hist_used": 1693,
+          "top12_overlap_prev": 5,
+          "top_intraday": [
+            [
+              "19",
+              2
+            ],
+            [
+              "36",
+              1
+            ],
+            [
+              "21",
+              1
+            ],
+            [
+              "37",
+              1
+            ],
+            [
+              "15",
               1
             ]
           ]
