@@ -1,52 +1,52 @@
 {
-  "generated_at": "2026-08-18T13:19:16.116387-04:00",
-  "event_key": "2026-08-18|Anguilla|Anguila 1PM",
+  "generated_at": "2026-08-18T14:46:52.225111-04:00",
+  "event_key": "2026-08-18|La Nacional|Loteria Nacional- Gana Más",
   "items": [
     {
-      "generated_at": "2026-08-18T13:19:16.090275-04:00",
-      "event_key": "2026-08-18|Anguilla|Anguila 1PM",
+      "generated_at": "2026-08-18T14:46:52.198570-04:00",
+      "event_key": "2026-08-18|La Nacional|Loteria Nacional- Gana Más",
       "target": {
-        "time_rd": "2026-08-18 14:30",
-        "lottery": "La Nacional",
-        "draw": "Loteria Nacional- Gana Más"
+        "time_rd": "2026-08-18 18:00",
+        "lottery": "Anguilla",
+        "draw": "Anguila 6PM"
       },
       "best_play": {
-        "time_rd": "2026-08-18 14:30",
-        "lottery": "La Nacional",
-        "draw": "Loteria Nacional- Gana Más",
+        "time_rd": "2026-08-18 18:00",
+        "lottery": "Anguilla",
+        "draw": "Anguila 6PM",
         "top12": [
-          "08",
-          "40",
-          "07",
-          "58",
-          "89",
-          "03",
-          "27",
-          "80",
-          "20",
-          "85",
-          "65",
-          "57"
+          "39",
+          "43",
+          "93",
+          "51",
+          "28",
+          "47",
+          "59",
+          "54",
+          "48",
+          "26",
+          "46",
+          "80"
         ],
         "topq": [
-          "08",
-          "40",
-          "07"
+          "39",
+          "43",
+          "93"
         ],
         "pales": [
-          "08-40",
-          "07-08",
-          "08-58"
+          "39-43",
+          "39-93",
+          "39-51"
         ],
-        "fingerprint": "863ebaf553f73029",
+        "fingerprint": "072d52ced5cf6c00",
         "decision": "❌ NO JUGAR",
-        "best_signal": 0.03733409824763475,
+        "best_signal": 0.03386674102472384,
         "best_a11": 3,
         "debug": {
-          "today_observed_nums": 5,
-          "source_pairs_today": 2,
-          "source_rows_hist_used": 1068,
-          "top12_overlap_prev": 3,
+          "today_observed_nums": 8,
+          "source_pairs_today": 3,
+          "source_rows_hist_used": 1602,
+          "top12_overlap_prev": 1,
           "top_intraday": [
             [
               "40",
