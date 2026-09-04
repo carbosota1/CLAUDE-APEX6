@@ -1,144 +1,53 @@
 {
-  "generated_at": "2026-09-03T18:23:52.455228-04:00",
-  "event_key": "2026-09-03|Anguilla|Anguila 6PM",
+  "generated_at": "2026-09-04T10:38:51.257662-04:00",
+  "event_key": "2026-09-04|PRE|La Primera|Quiniela La Primera",
   "items": [
     {
-      "generated_at": "2026-09-03T18:23:45.854856-04:00",
-      "event_key": "2026-09-03|Anguilla|Anguila 6PM",
+      "generated_at": "2026-09-04T10:38:51.228562-04:00",
+      "event_key": "2026-09-04|PRE|La Primera|Quiniela La Primera",
       "target": {
-        "time_rd": "2026-09-03 21:00",
-        "lottery": "Anguilla",
-        "draw": "Anguila 9PM"
+        "time_rd": "2026-09-04 12:00",
+        "lottery": "La Primera",
+        "draw": "Quiniela La Primera"
       },
       "best_play": {
-        "time_rd": "2026-09-03 21:00",
-        "lottery": "Anguilla",
-        "draw": "Anguila 9PM",
+        "time_rd": "2026-09-04 12:00",
+        "lottery": "La Primera",
+        "draw": "Quiniela La Primera",
         "top12": [
+          "80",
           "12",
-          "49",
-          "58",
-          "43",
-          "95",
-          "81",
-          "76",
-          "47",
-          "29",
-          "18",
-          "20",
-          "97"
+          "07",
+          "85",
+          "65",
+          "28",
+          "40",
+          "08",
+          "56",
+          "42",
+          "88",
+          "13"
         ],
         "topq": [
+          "80",
           "12",
-          "49",
-          "58"
+          "07"
         ],
         "pales": [
-          "12-49",
-          "12-58",
-          "12-43"
+          "12-80",
+          "07-80",
+          "80-85"
         ],
-        "fingerprint": "cba70e4a3b5da988",
+        "fingerprint": "4422c0bec9530ce3",
         "decision": "❌ NO JUGAR",
-        "best_signal": 0.005929369470446202,
-        "best_a11": 4,
-        "debug": {
-          "today_observed_nums": 12,
-          "source_pairs_today": 4,
-          "source_rows_hist_used": 1893,
-          "top12_overlap_prev": 1,
-          "top_intraday": [
-            [
-              "14",
-              1
-            ],
-            [
-              "95",
-              1
-            ],
-            [
-              "93",
-              1
-            ],
-            [
-              "46",
-              1
-            ],
-            [
-              "09",
-              1
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "generated_at": "2026-09-03T18:23:50.413333-04:00",
-      "event_key": "2026-09-03|Anguilla|Anguila 6PM",
-      "target": {
-        "time_rd": "2026-09-03 21:00",
-        "lottery": "La Nacional",
-        "draw": "Loteria Nacional- Noche"
-      },
-      "best_play": {
-        "time_rd": "2026-09-03 21:00",
-        "lottery": "La Nacional",
-        "draw": "Loteria Nacional- Noche",
-        "top12": [
-          "09",
-          "13",
-          "93",
-          "81",
-          "46",
-          "22",
-          "32",
-          "24",
-          "87",
-          "63",
-          "95",
-          "97"
-        ],
-        "topq": [
-          "09",
-          "13",
-          "93"
-        ],
-        "pales": [
-          "09-13",
-          "09-93",
-          "09-81"
-        ],
-        "fingerprint": "2a72ec0902b2775b",
-        "decision": "🔥 SEÑAL ÓPTIMA",
-        "best_signal": 0.008487459178199354,
+        "best_signal": 0.022116879624294976,
         "best_a11": 3,
         "debug": {
-          "today_observed_nums": 12,
-          "source_pairs_today": 4,
-          "source_rows_hist_used": 1893,
-          "top12_overlap_prev": 3,
-          "top_intraday": [
-            [
-              "14",
-              1
-            ],
-            [
-              "95",
-              1
-            ],
-            [
-              "93",
-              1
-            ],
-            [
-              "46",
-              1
-            ],
-            [
-              "09",
-              1
-            ]
-          ]
+          "today_observed_nums": 0,
+          "source_pairs_today": 0,
+          "source_rows_hist_used": 2316,
+          "top12_overlap_prev": 1,
+          "top_intraday": []
         }
       }
     }
