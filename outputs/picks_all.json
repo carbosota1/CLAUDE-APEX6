@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-09-08T18:20:31.595868-04:00",
-  "event_key": "2026-09-08|Anguilla|Anguila 6PM",
+  "generated_at": "2026-09-08T19:48:08.521836-04:00",
+  "event_key": "2026-09-08|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
   "items": [
     {
-      "generated_at": "2026-09-08T18:20:25.170929-04:00",
-      "event_key": "2026-09-08|Anguilla|Anguila 6PM",
+      "generated_at": "2026-09-08T19:48:02.292367-04:00",
+      "event_key": "2026-09-08|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
       "target": {
         "time_rd": "2026-09-08 21:00",
         "lottery": "Anguilla",
@@ -15,12 +15,12 @@
         "lottery": "Anguilla",
         "draw": "Anguila 9PM",
         "top12": [
-          "07",
           "92",
           "69",
-          "86",
+          "07",
           "09",
           "05",
+          "86",
           "29",
           "02",
           "20",
@@ -29,16 +29,16 @@
           "80"
         ],
         "topq": [
-          "07",
           "92",
-          "69"
+          "69",
+          "07"
         ],
         "pales": [
+          "69-92",
           "07-92",
-          "07-69",
-          "07-86"
+          "09-92"
         ],
-        "fingerprint": "5d1a86728f6578da",
+        "fingerprint": "6879ae72f13940fc",
         "decision": "✅ JUGAR",
         "best_signal": 0.0037050191999401477,
         "best_a11": 3,
@@ -46,7 +46,7 @@
           "today_observed_nums": 11,
           "source_pairs_today": 4,
           "source_rows_hist_used": 1710,
-          "top12_overlap_prev": 2,
+          "top12_overlap_prev": 4,
           "top_intraday": [
             [
               "07",
@@ -73,8 +73,8 @@
       }
     },
     {
-      "generated_at": "2026-09-08T18:20:30.742196-04:00",
-      "event_key": "2026-09-08|Anguilla|Anguila 6PM",
+      "generated_at": "2026-09-08T19:48:07.726260-04:00",
+      "event_key": "2026-09-08|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
       "target": {
         "time_rd": "2026-09-08 21:00",
         "lottery": "La Nacional",
@@ -86,29 +86,29 @@
         "draw": "Loteria Nacional- Noche",
         "top12": [
           "83",
-          "99",
           "07",
           "86",
+          "99",
           "38",
           "95",
           "14",
-          "79",
           "49",
+          "79",
           "13",
           "03",
           "80"
         ],
         "topq": [
           "83",
-          "99",
-          "07"
+          "07",
+          "86"
         ],
         "pales": [
-          "83-99",
           "07-83",
-          "83-86"
+          "83-86",
+          "83-99"
         ],
-        "fingerprint": "f78859da04c63493",
+        "fingerprint": "7658cbf249abd380",
         "decision": "✅ JUGAR",
         "best_signal": 0.0021861451138842657,
         "best_a11": 3,
