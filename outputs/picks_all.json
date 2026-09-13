@@ -1,55 +1,59 @@
 {
-  "generated_at": "2026-09-13T14:47:37.174232-04:00",
-  "event_key": "2026-09-13|La Nacional|Loteria Nacional- Gana Más",
+  "generated_at": "2026-09-13T18:20:15.660350-04:00",
+  "event_key": "2026-09-13|La Nacional|Loteria Nacional- Noche",
   "items": [
     {
-      "generated_at": "2026-09-13T14:47:32.130010-04:00",
-      "event_key": "2026-09-13|La Nacional|Loteria Nacional- Gana Más",
+      "generated_at": "2026-09-13T18:20:15.627672-04:00",
+      "event_key": "2026-09-13|La Nacional|Loteria Nacional- Noche",
       "target": {
-        "time_rd": "2026-09-13 18:00",
+        "time_rd": "2026-09-13 21:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 6PM"
+        "draw": "Anguila 9PM"
       },
       "best_play": {
-        "time_rd": "2026-09-13 18:00",
+        "time_rd": "2026-09-13 21:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 6PM",
+        "draw": "Anguila 9PM",
         "top12": [
-          "13",
-          "46",
-          "00",
-          "47",
-          "80",
-          "74",
-          "15",
-          "92",
-          "97",
+          "12",
+          "03",
+          "41",
+          "06",
+          "57",
+          "05",
+          "49",
           "24",
           "07",
-          "42"
+          "98",
+          "83",
+          "55"
         ],
         "topq": [
-          "13",
-          "46",
-          "00"
+          "12",
+          "03",
+          "41"
         ],
         "pales": [
-          "13-46",
-          "00-13",
-          "13-47"
+          "03-12",
+          "12-41",
+          "06-12"
         ],
-        "fingerprint": "1a1161d78138fdcb",
+        "fingerprint": "140bebbd16b43418",
         "decision": "❌ NO JUGAR",
-        "best_signal": 0.01422206949935941,
+        "best_signal": 0.02429527548563148,
         "best_a11": 3,
         "debug": {
-          "today_observed_nums": 8,
-          "source_pairs_today": 3,
-          "source_rows_hist_used": 1602,
-          "top12_overlap_prev": 0,
+          "today_observed_nums": 13,
+          "source_pairs_today": 5,
+          "source_rows_hist_used": 2400,
+          "top12_overlap_prev": 1,
           "top_intraday": [
             [
               "41",
+              2
+            ],
+            [
+              "46",
               2
             ],
             [
@@ -61,81 +65,7 @@
               1
             ],
             [
-              "46",
-              1
-            ],
-            [
-              "37",
-              1
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "generated_at": "2026-09-13T14:47:37.144183-04:00",
-      "event_key": "2026-09-13|La Nacional|Loteria Nacional- Gana Más",
-      "target": {
-        "time_rd": "2026-09-13 18:00",
-        "lottery": "La Nacional",
-        "draw": "Loteria Nacional- Noche"
-      },
-      "best_play": {
-        "time_rd": "2026-09-13 18:00",
-        "lottery": "La Nacional",
-        "draw": "Loteria Nacional- Noche",
-        "top12": [
-          "71",
-          "81",
-          "78",
-          "10",
-          "52",
-          "77",
-          "57",
-          "38",
-          "43",
-          "28",
-          "11",
-          "48"
-        ],
-        "topq": [
-          "71",
-          "81",
-          "78"
-        ],
-        "pales": [
-          "71-81",
-          "71-78",
-          "10-71"
-        ],
-        "fingerprint": "33934adeb9a587ab",
-        "decision": "❌ NO JUGAR",
-        "best_signal": 0.02243151287552378,
-        "best_a11": 3,
-        "debug": {
-          "today_observed_nums": 8,
-          "source_pairs_today": 3,
-          "source_rows_hist_used": 1602,
-          "top12_overlap_prev": 0,
-          "top_intraday": [
-            [
-              "41",
-              2
-            ],
-            [
-              "61",
-              1
-            ],
-            [
-              "93",
-              1
-            ],
-            [
-              "46",
-              1
-            ],
-            [
-              "37",
+              "38",
               1
             ]
           ]
