@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-09-21T18:18:26.266586-04:00",
-  "event_key": "2026-09-21|Anguilla|Anguila 6PM",
+  "generated_at": "2026-09-21T20:16:17.096562-04:00",
+  "event_key": "2026-09-21|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
   "items": [
     {
-      "generated_at": "2026-09-21T18:18:21.702958-04:00",
-      "event_key": "2026-09-21|Anguilla|Anguila 6PM",
+      "generated_at": "2026-09-21T20:16:07.189202-04:00",
+      "event_key": "2026-09-21|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
       "target": {
         "time_rd": "2026-09-21 21:00",
         "lottery": "Anguilla",
@@ -16,29 +16,29 @@
         "draw": "Anguila 9PM",
         "top12": [
           "80",
-          "22",
           "75",
           "90",
+          "22",
+          "69",
+          "28",
+          "97",
+          "83",
           "71",
           "63",
           "05",
-          "69",
-          "28",
-          "83",
-          "03",
-          "97"
+          "03"
         ],
         "topq": [
           "80",
-          "22",
-          "75"
+          "75",
+          "90"
         ],
         "pales": [
-          "22-80",
           "75-80",
-          "80-90"
+          "80-90",
+          "22-80"
         ],
-        "fingerprint": "17786c234e266d04",
+        "fingerprint": "bebf12bffa0739fd",
         "decision": "❌ NO JUGAR",
         "best_signal": 0.012251341069077411,
         "best_a11": 5,
@@ -46,7 +46,7 @@
           "today_observed_nums": 12,
           "source_pairs_today": 4,
           "source_rows_hist_used": 1950,
-          "top12_overlap_prev": 1,
+          "top12_overlap_prev": 6,
           "top_intraday": [
             [
               "40",
@@ -73,8 +73,8 @@
       }
     },
     {
-      "generated_at": "2026-09-21T18:18:26.230469-04:00",
-      "event_key": "2026-09-21|Anguilla|Anguila 6PM",
+      "generated_at": "2026-09-21T20:16:12.370409-04:00",
+      "event_key": "2026-09-21|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
       "target": {
         "time_rd": "2026-09-21 21:00",
         "lottery": "La Nacional",
