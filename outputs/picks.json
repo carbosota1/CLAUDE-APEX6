@@ -1,38 +1,38 @@
 {
-  "generated_at": "2026-09-22T18:18:57.178250-04:00",
-  "event_key": "2026-09-22|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
-  "date": "2026-09-22",
+  "generated_at": "2026-09-23T10:33:12.861995-04:00",
+  "event_key": "2026-09-23|PRE|La Primera|Quiniela La Primera",
+  "date": "2026-09-23",
   "picks": [
     {
-      "lottery": "La Nacional",
-      "draw": "Loteria Nacional- Noche",
-      "time_rd": "2026-09-22 21:00",
-      "decision": "✅ JUGAR",
+      "lottery": "La Primera",
+      "draw": "Quiniela La Primera",
+      "time_rd": "2026-09-23 12:00",
+      "decision": "❌ NO JUGAR",
       "topq": [
         "57",
-        "58",
-        "22"
+        "80",
+        "47"
       ],
       "top12": [
         "57",
-        "58",
-        "22",
-        "36",
-        "42",
-        "90",
-        "07",
-        "68",
-        "87",
-        "63",
+        "80",
+        "47",
+        "08",
+        "40",
+        "54",
+        "24",
+        "91",
+        "96",
+        "25",
         "79",
-        "80"
+        "07"
       ],
       "pales": [
-        "57-58",
-        "22-57",
-        "36-57"
+        "57-80",
+        "47-57",
+        "08-57"
       ],
-      "best_signal": 0.003982363985327284,
+      "best_signal": 0.02408992315686907,
       "best_a11": 3
     }
   ]
