@@ -5,13 +5,12 @@ on:
     paths-ignore:
       - '**'
   schedule:
-    # Horarios en UTC. Santo Domingo (RD) = UTC-4 (sin horario de verano).
-    - cron: "30 14 * * *"  # 11:30 AM RD — backfill / chequeo temprano
-    - cron: "15 16 * * *"  # 12:15 PM RD — después de Quiniela La Primera (12:00)
-    - cron: "15 17 * * *"  # 1:15 PM RD  — después de Anguila 1PM (13:00)
-    - cron: "45 18 * * *"  # 2:45 PM RD  — después de Lotería Nacional Gana Más (14:30)
-    - cron: "15 22 * * *"  # 6:15 PM RD  — después de Anguila 6PM (18:00)
-    - cron: "20 1 * * *"   # 9:20 PM RD  — después de Anguila 9PM y Nacional Noche (21:00)
+    - cron: "30 14 * * *"
+    - cron: "15 16 * * *"
+    - cron: "15 17 * * *"
+    - cron: "45 18 * * *"
+    - cron: "15 22 * * *"
+    - cron: "20 1 * * *"
   workflow_dispatch:
     inputs:
       force_notify:
@@ -34,11 +33,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
           token: ${{ secrets.GITEA_TOKEN }}
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install --retries 5 --timeout 60 -r requirements.txt
 
       - name: Run APEX6
         env:
@@ -53,4 +52,4 @@ jobs:
           git config user.email "gitea-actions[bot]@noreply.local"
           git add data/histories/*.xlsx data/state.json data/picks_log.csv outputs/ || true
           git diff --cached --quiet || git commit -m "chore: update histories & picks [skip ci]"
-          git push --force
+          for i in 1 2 3 4 5; do git push --force && break || sleep 10; done
