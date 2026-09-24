@@ -37,7 +37,12 @@ jobs:
           token: ${{ secrets.GITEA_TOKEN }}
 
       - name: Install dependencies
-        run: pip install --retries 5 --timeout 60 -r requirements.txt
+        run: |
+          for i in 1 2 3 4 5; do
+            pip install --timeout 60 -r requirements.txt && break
+            echo "pip install falló, reintentando en 10s..."
+            sleep 10
+          done
 
       - name: Run APEX6
         env:
