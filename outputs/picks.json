@@ -1,38 +1,38 @@
 {
-  "generated_at": "2026-09-28T11:58:56.995730-04:00",
-  "event_key": "2026-09-28|PRE|La Primera|Quiniela La Primera",
+  "generated_at": "2026-09-28T14:49:12.011531-04:00",
+  "event_key": "2026-09-28|La Nacional|Loteria Nacional- Gana Más",
   "date": "2026-09-28",
   "picks": [
     {
-      "lottery": "La Primera",
-      "draw": "Quiniela La Primera",
-      "time_rd": "2026-09-28 12:00",
+      "lottery": "Anguilla",
+      "draw": "Anguila 6PM",
+      "time_rd": "2026-09-28 18:00",
       "decision": "❌ NO JUGAR",
       "topq": [
-        "80",
-        "85",
-        "79"
+        "13",
+        "74",
+        "31"
       ],
       "top12": [
-        "80",
-        "85",
-        "79",
-        "12",
-        "73",
-        "56",
-        "52",
-        "96",
-        "22",
-        "46",
-        "83",
-        "24"
+        "13",
+        "74",
+        "31",
+        "91",
+        "34",
+        "09",
+        "87",
+        "72",
+        "15",
+        "66",
+        "94",
+        "46"
       ],
       "pales": [
-        "80-85",
-        "79-80",
-        "12-80"
+        "13-74",
+        "13-31",
+        "13-91"
       ],
-      "best_signal": 0.020867836224005166,
+      "best_signal": 0.01993662186131268,
       "best_a11": 3
     }
   ]
