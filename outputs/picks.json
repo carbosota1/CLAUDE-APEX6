@@ -1,38 +1,38 @@
 {
-  "generated_at": "2026-10-02T10:33:00.150175-04:00",
-  "event_key": "2026-10-02|PRE|La Primera|Quiniela La Primera",
+  "generated_at": "2026-10-02T13:25:16.919885-04:00",
+  "event_key": "2026-10-02|Anguilla|Anguila 1PM",
   "date": "2026-10-02",
   "picks": [
     {
-      "lottery": "La Primera",
-      "draw": "Quiniela La Primera",
-      "time_rd": "2026-10-02 12:00",
+      "lottery": "La Nacional",
+      "draw": "Loteria Nacional- Gana Más",
+      "time_rd": "2026-10-02 14:30",
       "decision": "❌ NO JUGAR",
       "topq": [
-        "80",
-        "99",
-        "12"
+        "20",
+        "07",
+        "29"
       ],
       "top12": [
-        "80",
-        "99",
-        "12",
-        "39",
+        "20",
+        "07",
+        "29",
+        "41",
+        "54",
+        "63",
+        "57",
+        "43",
+        "40",
         "65",
-        "26",
-        "46",
-        "24",
-        "16",
-        "22",
-        "79",
-        "13"
+        "13",
+        "79"
       ],
       "pales": [
-        "80-99",
-        "12-80",
-        "39-80"
+        "07-20",
+        "20-29",
+        "20-41"
       ],
-      "best_signal": 0.020867836224005166,
+      "best_signal": 0.03493759422136927,
       "best_a11": 3
     }
   ]
