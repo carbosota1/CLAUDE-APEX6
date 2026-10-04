@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-10-03T18:17:39.593399-04:00",
-  "event_key": "2026-10-03|Anguilla|Anguila 6PM",
+  "generated_at": "2026-10-03T20:46:09.168836-04:00",
+  "event_key": "2026-10-03|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
   "items": [
     {
-      "generated_at": "2026-10-03T18:17:34.938399-04:00",
-      "event_key": "2026-10-03|Anguilla|Anguila 6PM",
+      "generated_at": "2026-10-03T20:46:03.322572-04:00",
+      "event_key": "2026-10-03|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
       "target": {
         "time_rd": "2026-10-03 21:00",
         "lottery": "Anguilla",
@@ -16,29 +16,29 @@
         "draw": "Anguila 9PM",
         "top12": [
           "49",
-          "63",
           "76",
+          "20",
+          "63",
           "37",
           "06",
-          "20",
           "88",
           "18",
+          "34",
           "83",
           "40",
-          "80",
-          "34"
+          "80"
         ],
         "topq": [
           "49",
-          "63",
-          "76"
+          "76",
+          "20"
         ],
         "pales": [
-          "49-63",
           "49-76",
-          "37-49"
+          "20-49",
+          "49-63"
         ],
-        "fingerprint": "dcb250a154d245b8",
+        "fingerprint": "41d61256bfb38593",
         "decision": "❌ NO JUGAR",
         "best_signal": 0.015035598066764378,
         "best_a11": 4,
@@ -46,7 +46,7 @@
           "today_observed_nums": 12,
           "source_pairs_today": 4,
           "source_rows_hist_used": 1942,
-          "top12_overlap_prev": 2,
+          "top12_overlap_prev": 4,
           "top_intraday": [
             [
               "71",
@@ -73,8 +73,8 @@
       }
     },
     {
-      "generated_at": "2026-10-03T18:17:39.555905-04:00",
-      "event_key": "2026-10-03|Anguilla|Anguila 6PM",
+      "generated_at": "2026-10-03T20:46:08.449588-04:00",
+      "event_key": "2026-10-03|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
       "target": {
         "time_rd": "2026-10-03 21:00",
         "lottery": "La Nacional",
