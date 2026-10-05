@@ -1,56 +1,56 @@
 {
-  "generated_at": "2026-10-05T14:47:51.835861-04:00",
-  "event_key": "2026-10-05|La Nacional|Loteria Nacional- Gana Más",
+  "generated_at": "2026-10-05T18:18:12.763022-04:00",
+  "event_key": "2026-10-05|Anguilla|Anguila 6PM",
   "items": [
     {
-      "generated_at": "2026-10-05T14:47:51.799471-04:00",
-      "event_key": "2026-10-05|La Nacional|Loteria Nacional- Gana Más",
+      "generated_at": "2026-10-05T18:17:59.908866-04:00",
+      "event_key": "2026-10-05|Anguilla|Anguila 6PM",
       "target": {
-        "time_rd": "2026-10-05 18:00",
+        "time_rd": "2026-10-05 21:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 6PM"
+        "draw": "Anguila 9PM"
       },
       "best_play": {
-        "time_rd": "2026-10-05 18:00",
+        "time_rd": "2026-10-05 21:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 6PM",
+        "draw": "Anguila 9PM",
         "top12": [
-          "13",
-          "93",
-          "88",
-          "31",
-          "09",
-          "15",
-          "34",
-          "87",
-          "74",
-          "68",
-          "03",
-          "46"
+          "24",
+          "94",
+          "41",
+          "05",
+          "19",
+          "45",
+          "69",
+          "20",
+          "63",
+          "83",
+          "80",
+          "87"
         ],
         "topq": [
-          "13",
-          "93",
-          "88"
+          "24",
+          "94",
+          "41"
         ],
         "pales": [
-          "13-93",
-          "13-88",
-          "13-31"
+          "24-94",
+          "24-41",
+          "05-24"
         ],
-        "fingerprint": "22e4e7fc4130fafb",
-        "decision": "❌ NO JUGAR",
-        "best_signal": 0.020888606109271155,
-        "best_a11": 3,
+        "fingerprint": "37b5cb0e2fd85a87",
+        "decision": "✅ JUGAR",
+        "best_signal": 0.004260285670029979,
+        "best_a11": 2,
         "debug": {
-          "today_observed_nums": 8,
-          "source_pairs_today": 3,
-          "source_rows_hist_used": 1602,
+          "today_observed_nums": 10,
+          "source_pairs_today": 4,
+          "source_rows_hist_used": 1679,
           "top12_overlap_prev": 1,
           "top_intraday": [
             [
               "67",
-              2
+              3
             ],
             [
               "54",
@@ -61,11 +61,81 @@
               1
             ],
             [
-              "77",
+              "41",
               1
             ],
             [
-              "19",
+              "09",
+              1
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "generated_at": "2026-10-05T18:18:12.714073-04:00",
+      "event_key": "2026-10-05|Anguilla|Anguila 6PM",
+      "target": {
+        "time_rd": "2026-10-05 21:00",
+        "lottery": "La Nacional",
+        "draw": "Loteria Nacional- Noche"
+      },
+      "best_play": {
+        "time_rd": "2026-10-05 21:00",
+        "lottery": "La Nacional",
+        "draw": "Loteria Nacional- Noche",
+        "top12": [
+          "67",
+          "11",
+          "94",
+          "05",
+          "00",
+          "73",
+          "95",
+          "99",
+          "38",
+          "22",
+          "13",
+          "41"
+        ],
+        "topq": [
+          "67",
+          "11",
+          "94"
+        ],
+        "pales": [
+          "11-67",
+          "67-94",
+          "05-67"
+        ],
+        "fingerprint": "6ffde6346442963b",
+        "decision": "❌ NO JUGAR",
+        "best_signal": 0.003022953001606984,
+        "best_a11": 2,
+        "debug": {
+          "today_observed_nums": 10,
+          "source_pairs_today": 4,
+          "source_rows_hist_used": 1679,
+          "top12_overlap_prev": 3,
+          "top_intraday": [
+            [
+              "67",
+              3
+            ],
+            [
+              "54",
+              1
+            ],
+            [
+              "44",
+              1
+            ],
+            [
+              "41",
+              1
+            ],
+            [
+              "09",
               1
             ]
           ]
