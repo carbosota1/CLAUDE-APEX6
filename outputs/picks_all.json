@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-10-09T18:19:33.685811-04:00",
-  "event_key": "2026-10-09|Anguilla|Anguila 6PM",
+  "generated_at": "2026-10-09T18:31:02.521585-04:00",
+  "event_key": "2026-10-09|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
   "items": [
     {
-      "generated_at": "2026-10-09T18:19:29.104009-04:00",
-      "event_key": "2026-10-09|Anguilla|Anguila 6PM",
+      "generated_at": "2026-10-09T18:30:56.572413-04:00",
+      "event_key": "2026-10-09|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
       "target": {
         "time_rd": "2026-10-09 21:00",
         "lottery": "Anguilla",
@@ -17,28 +17,28 @@
         "top12": [
           "32",
           "74",
-          "71",
-          "55",
           "52",
           "92",
-          "25",
           "05",
+          "25",
           "94",
           "18",
           "19",
+          "71",
+          "55",
           "03"
         ],
         "topq": [
           "32",
           "74",
-          "71"
+          "52"
         ],
         "pales": [
           "32-74",
-          "32-71",
-          "32-55"
+          "32-52",
+          "32-92"
         ],
-        "fingerprint": "82345599df58cdc8",
+        "fingerprint": "e3396736bcf345ae",
         "decision": "❌ NO JUGAR",
         "best_signal": 0.004931854282063697,
         "best_a11": 1,
@@ -46,7 +46,7 @@
           "today_observed_nums": 11,
           "source_pairs_today": 4,
           "source_rows_hist_used": 1731,
-          "top12_overlap_prev": 0,
+          "top12_overlap_prev": 5,
           "top_intraday": [
             [
               "00",
@@ -73,8 +73,8 @@
       }
     },
     {
-      "generated_at": "2026-10-09T18:19:33.647454-04:00",
-      "event_key": "2026-10-09|Anguilla|Anguila 6PM",
+      "generated_at": "2026-10-09T18:31:01.794266-04:00",
+      "event_key": "2026-10-09|PRE|Anguilla|Anguila 9PM+La Nacional|Loteria Nacional- Noche",
       "target": {
         "time_rd": "2026-10-09 21:00",
         "lottery": "La Nacional",
