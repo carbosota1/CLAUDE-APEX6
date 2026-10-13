@@ -1,39 +1,39 @@
 {
-  "generated_at": "2026-10-13T13:34:03.001394-04:00",
-  "event_key": "2026-10-13|PRE|La Nacional|Loteria Nacional- Gana Más",
+  "generated_at": "2026-10-13T14:47:52.044988-04:00",
+  "event_key": "2026-10-13|La Nacional|Loteria Nacional- Gana Más",
   "date": "2026-10-13",
   "picks": [
     {
-      "lottery": "La Nacional",
-      "draw": "Loteria Nacional- Gana Más",
-      "time_rd": "2026-10-13 14:30",
+      "lottery": "Anguilla",
+      "draw": "Anguila 6PM",
+      "time_rd": "2026-10-13 18:00",
       "decision": "❌ NO JUGAR",
       "topq": [
-        "67",
-        "45",
-        "43"
+        "00",
+        "39",
+        "36"
       ],
       "top12": [
-        "67",
-        "45",
-        "43",
-        "63",
-        "50",
-        "97",
-        "85",
+        "00",
+        "39",
+        "36",
+        "62",
+        "80",
+        "48",
+        "12",
         "13",
+        "27",
+        "67",
         "22",
-        "64",
-        "96",
-        "68"
+        "63"
       ],
       "pales": [
-        "45-67",
-        "43-67",
-        "63-67"
+        "00-39",
+        "00-36",
+        "00-62"
       ],
-      "best_signal": 0.009190325396054622,
-      "best_a11": 2
+      "best_signal": 0.015694613110787257,
+      "best_a11": 4
     }
   ]
 }
