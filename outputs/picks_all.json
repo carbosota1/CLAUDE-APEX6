@@ -1,53 +1,57 @@
 {
-  "generated_at": "2026-10-13T14:47:52.044571-04:00",
-  "event_key": "2026-10-13|La Nacional|Loteria Nacional- Gana Más",
+  "generated_at": "2026-10-13T18:18:19.336310-04:00",
+  "event_key": "2026-10-13|Anguilla|Anguila 6PM",
   "items": [
     {
-      "generated_at": "2026-10-13T14:47:52.006745-04:00",
-      "event_key": "2026-10-13|La Nacional|Loteria Nacional- Gana Más",
+      "generated_at": "2026-10-13T18:18:13.952395-04:00",
+      "event_key": "2026-10-13|Anguilla|Anguila 6PM",
       "target": {
-        "time_rd": "2026-10-13 18:00",
+        "time_rd": "2026-10-13 21:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 6PM"
+        "draw": "Anguila 9PM"
       },
       "best_play": {
-        "time_rd": "2026-10-13 18:00",
+        "time_rd": "2026-10-13 21:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 6PM",
+        "draw": "Anguila 9PM",
         "top12": [
-          "00",
-          "39",
-          "36",
-          "62",
-          "80",
-          "48",
-          "12",
-          "13",
-          "27",
-          "67",
-          "22",
-          "63"
+          "52",
+          "50",
+          "24",
+          "73",
+          "02",
+          "45",
+          "18",
+          "88",
+          "28",
+          "03",
+          "97",
+          "67"
         ],
         "topq": [
-          "00",
-          "39",
-          "36"
+          "52",
+          "50",
+          "24"
         ],
         "pales": [
-          "00-39",
-          "00-36",
-          "00-62"
+          "50-52",
+          "24-52",
+          "52-73"
         ],
-        "fingerprint": "b73bc3c9433accdf",
+        "fingerprint": "927419ad2d5f0f15",
         "decision": "❌ NO JUGAR",
-        "best_signal": 0.015694613110787257,
+        "best_signal": 0.005818621597927656,
         "best_a11": 4,
         "debug": {
-          "today_observed_nums": 9,
-          "source_pairs_today": 3,
-          "source_rows_hist_used": 1602,
-          "top12_overlap_prev": 4,
+          "today_observed_nums": 11,
+          "source_pairs_today": 4,
+          "source_rows_hist_used": 1765,
+          "top12_overlap_prev": 1,
           "top_intraday": [
+            [
+              "18",
+              2
+            ],
             [
               "36",
               1
@@ -57,15 +61,81 @@
               1
             ],
             [
+              "24",
+              1
+            ],
+            [
+              "81",
+              1
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "generated_at": "2026-10-13T18:18:18.579157-04:00",
+      "event_key": "2026-10-13|Anguilla|Anguila 6PM",
+      "target": {
+        "time_rd": "2026-10-13 21:00",
+        "lottery": "La Nacional",
+        "draw": "Loteria Nacional- Noche"
+      },
+      "best_play": {
+        "time_rd": "2026-10-13 21:00",
+        "lottery": "La Nacional",
+        "draw": "Loteria Nacional- Noche",
+        "top12": [
+          "81",
+          "50",
+          "69",
+          "58",
+          "88",
+          "35",
+          "14",
+          "90",
+          "61",
+          "05",
+          "64",
+          "43"
+        ],
+        "topq": [
+          "81",
+          "50",
+          "69"
+        ],
+        "pales": [
+          "50-81",
+          "69-81",
+          "58-81"
+        ],
+        "fingerprint": "65f185a766ca81dc",
+        "decision": "🔥 SEÑAL ÓPTIMA",
+        "best_signal": 0.006183222149852759,
+        "best_a11": 3,
+        "debug": {
+          "today_observed_nums": 11,
+          "source_pairs_today": 4,
+          "source_rows_hist_used": 1765,
+          "top12_overlap_prev": 2,
+          "top_intraday": [
+            [
               "18",
+              2
+            ],
+            [
+              "36",
               1
             ],
             [
-              "88",
+              "45",
               1
             ],
             [
-              "02",
+              "24",
+              1
+            ],
+            [
+              "81",
               1
             ]
           ]
