@@ -44,6 +44,55 @@ jobs:
             sleep 10
           done
 
+      - name: Sync historiales desde CLAUDE-LOTMIX
+        env:
+          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+        run: |
+          set -e
+          LOTMIX_URL="https://${GITEA_TOKEN}@gitea.totipicks.com/edgar26/CLAUDE-LOTMIX.git"
+          echo "[INFO] Clonando historiales de CLAUDE-LOTMIX..."
+          git clone --depth 1 "$LOTMIX_URL" /tmp/lotmix 2>&1 | grep -v "Cloning into"
+
+          HIST_SRC="/tmp/lotmix/data/histories"
+          HIST_DST="data/histories"
+
+          python3 - <<'PYEOF'
+          import os, sys
+          sys.path.insert(0, "src")
+          import pandas as pd
+          from io_xlsx import upsert_history_xlsx, ensure_dir
+
+          src = "/tmp/lotmix/data/histories"
+          dst = "data/histories"
+          ensure_dir(dst)
+
+          files = [
+              ("Anguilla history.xlsx",    "Anguilla history.xlsx"),
+              ("La Primera History.xlsx",  "La Primera History.xlsx"),
+              ("La nacional history.xlsx", "La nacional history.xlsx"),
+          ]
+
+          for src_name, dst_name in files:
+              src_path = os.path.join(src, src_name)
+              dst_path = os.path.join(dst, dst_name)
+              if not os.path.exists(src_path):
+                  print(f"[WARN] No existe en LOTMIX: {src_name}")
+                  continue
+              try:
+                  df_src = pd.read_excel(src_path, dtype=str)
+                  df_src.columns = [c.strip().lower() for c in df_src.columns]
+                  if not {"fecha","sorteo","primero","segundo","tercero"}.issubset(df_src.columns):
+                      print(f"[WARN] Columnas inesperadas en {src_name}: {list(df_src.columns)}")
+                      continue
+                  rows_before = len(pd.read_excel(dst_path, dtype=str)) if os.path.exists(dst_path) else 0
+                  upsert_history_xlsx(dst_path, df_src)
+                  rows_after = len(pd.read_excel(dst_path, dtype=str))
+                  added = rows_after - rows_before
+                  print(f"[OK] {dst_name}: {rows_before} → {rows_after} filas (+{added} de LOTMIX)")
+              except Exception as e:
+                  print(f"[ERROR] Merge {src_name}: {e}")
+          PYEOF
+
       - name: Run APEX6
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
