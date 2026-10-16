@@ -1,20 +1,16 @@
 """
 runner_apex6.py — Orquestador principal del sistema APEX6.
 
-v3 — Umbrales recalibrados sorteo por sorteo con datos propios de APEX6
-     (44 días, 255 sorteos reales, julio 2026):
+v4 — Fix crítico: backfill robusto para Anguila 1PM y Gana Más
+     (historial congelado desde junio 2026, confirmado vía picks_log SRH=534/1068)
 
-     🔥 SEÑAL ÓPTIMA: rango peak de cada sorteo — 42.0% hit (n=69)
-     ✅ JUGAR:         rango válido ampliado    — 32.9% hit (n=85)
-     ❌ NO JUGAR:      fuera de rango           — no notifica
-
-     Cambios vs v2:
-     - Anguila 1PM:   optimo estrecho a sig 0.015-0.020 (peak real)
-     - Anguila 6PM:   a11=3 eliminado del rango válido (0% hit); solo a11=2
-     - Anguila 9PM:   sweet spot confirmado en sig 0.005-0.015
-     - La Primera:    a11=3 eliminado (23.1%); solo a11=6 notifica
-     - Gana Más:      optimo estrecho a sig 0.010-0.015 (41.7% peak)
-     - Nac. Noche:    a11=2 y a11=4 eliminados; solo a11=3 notifica
+     Cambios vs v3:
+     - force_refresh_backfill: days_back=7 en main() para recuperar semana completa
+     - _try_update_for_date: para fechas pasadas NO verifica "igual al de ayer"
+       (esa verificación bloqueaba resultados legítimos que coincidían con ayer)
+     - try_update_one: ventana anti-duplicado reducida 90→45 min
+     - Logging mejorado: errores de scraper impresos con prefijo [ERROR] al comienzo
+       del run (no enterrados en backfill)
 """
 from __future__ import annotations
 
@@ -352,7 +348,7 @@ def _get_history_df(lottery: str) -> pd.DataFrame:
                 df["sorteo"] = df["sorteo"].astype(str)
                 _xlsx_cache[lottery] = df
             except Exception:
-                _xlsx_cache[lottery] = pd.DataFrame()
+                _xlsx_cache[loyalty] = pd.DataFrame()
         else:
             _xlsx_cache[lottery] = pd.DataFrame()
     return _xlsx_cache[lottery]
@@ -398,11 +394,12 @@ def try_update_one(item: dict, state: dict) -> bool:
         return False
     p1, p2, p3 = fetch_result(item["lottery"], item["draw"], date_str)
     p1, p2, p3 = normalize_2d(p1), normalize_2d(p2), normalize_2d(p3)
+    # FIX v4: ventana anti-duplicado reducida 90→45 min
     yday = (now_rd().date() - timedelta(days=1)).strftime("%Y-%m-%d")
     yres = _get_row_for_date(item["lottery"], item["draw"], yday)
     if yres is not None and (p1, p2, p3) == yres:
-        if n < (_due_dt(item) + timedelta(minutes=90)):
-            raise RuntimeError(f"Resultado idéntico al de ayer para {item['draw']} — aún no publicado.")
+        if n < (_due_dt(item) + timedelta(minutes=45)):
+            raise RuntimeError(f"Resultado idéntico al de ayer para {item['draw']} — posiblemente aún no publicado.")
     new_row = pd.DataFrame([{"fecha": date_str, "sorteo": item["draw"],
                               "primero": p1, "segundo": p2, "tercero": p3}])
     ensure_dir(HIST_DIR)
@@ -419,6 +416,11 @@ def _missing_for_date(date_str: str) -> list[dict]:
             and not _has_row_for_date(item["lottery"], item["draw"], date_str)]
 
 def _try_update_for_date(item: dict, date_str: str, state: dict) -> bool:
+    """
+    FIX v4: Para fechas PASADAS no aplica verificación 'igual al de ayer'.
+    Esa verificación era correcta solo para el día de hoy (resultado recién publicado).
+    Para fechas anteriores, si el scraper devuelve un resultado, es el correcto.
+    """
     key = f"{date_str}|{item['lottery']}|{item['draw']}"
     last_updates = state.setdefault("last_updates", {})
     if _has_row_for_date(item["lottery"], item["draw"], date_str):
@@ -426,12 +428,14 @@ def _try_update_for_date(item: dict, date_str: str, state: dict) -> bool:
         return False
     p1, p2, p3 = fetch_result(item["lottery"], item["draw"], date_str)
     p1, p2, p3 = normalize_2d(p1), normalize_2d(p2), normalize_2d(p3)
+    # Solo verificar "igual al de ayer" si estamos procesando el día de HOY
     if date_str == today_str():
         yday = (now_rd().date() - timedelta(days=1)).strftime("%Y-%m-%d")
         yres = _get_row_for_date(item["lottery"], item["draw"], yday)
         if yres is not None and (p1, p2, p3) == yres:
-            if now_rd() < (_due_dt(item) + timedelta(minutes=90)):
-                raise RuntimeError(f"Resultado idéntico al de ayer — Skipping.")
+            if now_rd() < (_due_dt(item) + timedelta(minutes=45)):
+                raise RuntimeError(f"[{date_str}] Resultado idéntico al de ayer — posiblemente no publicado aún.")
+    # Para fechas pasadas: guardar directamente sin verificación de duplicado temporal
     new_row = pd.DataFrame([{"fecha": date_str, "sorteo": item["draw"],
                               "primero": p1, "segundo": p2, "tercero": p3}])
     ensure_dir(HIST_DIR)
@@ -440,13 +444,31 @@ def _try_update_for_date(item: dict, date_str: str, state: dict) -> bool:
     last_updates[key] = "done"
     return True
 
-def force_refresh_backfill(state: dict, days_back: int = 1,
+def force_refresh_backfill(state: dict, days_back: int = 7,
                             max_attempts: int = 5,
                             backoff_seconds: list[int] | None = None) -> dict:
+    """
+    FIX v4: days_back aumentado a 7 (antes era 1) para recuperar toda la semana.
+    El log ahora imprime todos los errores de scraper con [ERROR] para que
+    sean visibles en el tail del log de Gitea Actions.
+    """
     if backoff_seconds is None:
         backoff_seconds = [2, 5, 10, 20, 30]
     base = now_rd().date()
     dates = [(base - timedelta(days=i)).strftime("%Y-%m-%d") for i in range(days_back + 1)]
+
+    # Diagnóstico inicial: qué falta
+    missing_summary: list[str] = []
+    for ds in dates:
+        for item in _missing_for_date(ds):
+            missing_summary.append(f"{ds}|{item['lottery']}|{item['draw']}")
+    if missing_summary:
+        print(f"[INFO] Backfill: {len(missing_summary)} entradas faltantes en {days_back} días:")
+        for m in missing_summary[:20]:
+            print(f"[INFO]   FALTA: {m}")
+    else:
+        print("[INFO] Backfill: historial completo para los últimos 7 días.")
+
     for attempt in range(max_attempts):
         any_fixed = False
         for ds in dates:
@@ -456,11 +478,14 @@ def force_refresh_backfill(state: dict, days_back: int = 1,
                         any_fixed = True
                         print(f"[OK] Backfilled: {ds} | {item['lottery']} {item['draw']}")
                 except Exception as e:
-                    print(f"[WARN] Backfill skip: {ds} | {item['lottery']} {item['draw']}: {e}")
+                    # FIX v4: [ERROR] en vez de [WARN] para visibilidad en logs
+                    print(f"[ERROR] Backfill {ds}|{item['lottery']}|{item['draw']}: {type(e).__name__}: {e}")
         if not any_fixed and attempt < max_attempts - 1:
             wait = backoff_seconds[min(attempt, len(backoff_seconds) - 1)]
             print(f"[INFO] Backfill esperando {wait}s...")
             time.sleep(wait)
+        elif not any_fixed:
+            break
     return state
 
 # ===========================================================================
@@ -914,8 +939,9 @@ def main() -> None:
         except Exception as e:
             print(f"[WARN] update failed {item['lottery']}|{item['draw']}: {e}")
 
+    # FIX v4: days_back=7 para recuperar toda la semana de datos faltantes
     try:
-        state = force_refresh_backfill(state, days_back=1, max_attempts=5)
+        state = force_refresh_backfill(state, days_back=7, max_attempts=5)
     except Exception as e:
         print(f"[WARN] force_refresh_backfill failed: {e}")
 
@@ -1023,4 +1049,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
