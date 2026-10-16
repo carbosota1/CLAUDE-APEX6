@@ -1041,21 +1041,22 @@
     "2026-10-14 21:00|La Nacional|Loteria Nacional- Noche": "04fc1ef6b56c8299",
     "2026-10-15 14:30|La Nacional|Loteria Nacional- Gana Más": "5e260116fe3068f9",
     "2026-10-15 21:00|Anguilla|Anguila 9PM": "9b0da273213d37d7",
-    "2026-10-15 21:00|La Nacional|Loteria Nacional- Noche": "b81da5d9330648a3"
+    "2026-10-15 21:00|La Nacional|Loteria Nacional- Noche": "b81da5d9330648a3",
+    "2026-10-16 12:00|La Primera|Quiniela La Primera": "0e01b4b60a0486fd"
   },
   "last_wait_key": "2026-10-09|WAIT|1",
   "last_top12": [
     "80",
-    "47",
     "85",
-    "93",
+    "47",
     "26",
     "29",
     "52",
+    "93",
+    "42",
     "13",
     "16",
     "88",
-    "22",
-    "42"
+    "22"
   ]
 }

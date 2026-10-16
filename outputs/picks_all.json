@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-10-16T10:38:48.732488-04:00",
+  "generated_at": "2026-10-16T11:33:53.116830-04:00",
   "event_key": "2026-10-16|PRE|La Primera|Quiniela La Primera",
   "items": [
     {
-      "generated_at": "2026-10-16T10:38:48.691380-04:00",
+      "generated_at": "2026-10-16T11:33:52.360817-04:00",
       "event_key": "2026-10-16|PRE|La Primera|Quiniela La Primera",
       "target": {
         "time_rd": "2026-10-16 12:00",
@@ -16,29 +16,29 @@
         "draw": "Quiniela La Primera",
         "top12": [
           "80",
-          "47",
           "85",
-          "93",
+          "47",
           "26",
           "29",
           "52",
+          "93",
+          "42",
           "13",
           "16",
           "88",
-          "22",
-          "42"
+          "22"
         ],
         "topq": [
           "80",
-          "47",
-          "85"
+          "85",
+          "47"
         ],
         "pales": [
-          "47-80",
           "80-85",
-          "80-93"
+          "47-80",
+          "26-80"
         ],
-        "fingerprint": "e7b71ace818314d5",
+        "fingerprint": "0e01b4b60a0486fd",
         "decision": "❌ NO JUGAR",
         "best_signal": 0.020733409861817563,
         "best_a11": 3,
@@ -46,7 +46,7 @@
           "today_observed_nums": 0,
           "source_pairs_today": 0,
           "source_rows_hist_used": 2142,
-          "top12_overlap_prev": 1,
+          "top12_overlap_prev": 12,
           "top_intraday": []
         }
       }
