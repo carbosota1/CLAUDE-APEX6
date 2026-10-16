@@ -1,16 +1,19 @@
 """
 runner_apex6.py — Orquestador principal del sistema APEX6.
 
-v4 — Fix crítico: backfill robusto para Anguila 1PM y Gana Más
-     (historial congelado desde junio 2026, confirmado vía picks_log SRH=534/1068)
+v5 — Backfill dinámico: calcula días faltantes desde la última fecha
+     real del XLSX hasta hoy (cubre meses de datos perdidos, no solo 7 días).
 
-     Cambios vs v3:
-     - force_refresh_backfill: days_back=7 en main() para recuperar semana completa
+     Cambios vs v4:
+     - compute_max_days_back(): lee cada XLSX y encuentra la fecha más antigua
+       del último registro por sorteo — ese es el gap real a recuperar.
+     - force_refresh_backfill: usa ese days_back dinámico en lugar de 7 fijo.
+     - main(): llama compute_max_days_back() antes del backfill y loguea el gap.
+
+     Cambios vs v3 (mantenidos de v4):
      - _try_update_for_date: para fechas pasadas NO verifica "igual al de ayer"
-       (esa verificación bloqueaba resultados legítimos que coincidían con ayer)
-     - try_update_one: ventana anti-duplicado reducida 90→45 min
-     - Logging mejorado: errores de scraper impresos con prefijo [ERROR] al comienzo
-       del run (no enterrados en backfill)
+     - try_update_one: ventana anti-duplicado 90→45 min
+     - Logging [ERROR] para errores de scraper
 """
 from __future__ import annotations
 
@@ -21,7 +24,7 @@ import os
 import sys
 import time
 from collections import Counter
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date as date_type
 from zoneinfo import ZoneInfo
 
 import pandas as pd
@@ -50,22 +53,6 @@ XLSX_FILES: dict[str, str] = {
 
 # ---------------------------------------------------------------------------
 # Umbrales POR SORTEO — calibrados con 255 sorteos propios de APEX6
-#
-# optimo → 🔥 SEÑAL ÓPTIMA (rango peak, mayor hit rate)
-# valido → ✅ JUGAR         (rango aceptable)
-#
-# Evidencia:
-#   Anguila 1PM   optimo: a11=2, sig 0.015-0.020 → 40.0% (n=10)
-#                 valido: a11=2-3, sig 0.015-0.030 → 34-40%
-#   Anguila 6PM   optimo: a11=2, sig 0.015-0.020 → 33.3% (n=6)
-#                 a11=3 excluido — 0% hit en todos sus rangos
-#   Anguila 9PM   optimo: a11=2-3, sig 0.005-0.015 → 33.3% (n=9)
-#   La Primera    optimo: a11=6, sig >0.040 → 45.8% (n=24)
-#                 a11=3 excluido — 23.1% hit (por debajo del azar)
-#   Gana Más      optimo: a11=2, sig 0.010-0.015 → 41.7% (n=12)
-#                 valido: a11=2, sig 0.010-0.020 → 29.2% (aceptable)
-#   Nac. Noche    optimo: a11=3, sig 0.005-0.010 → 57.1% (n=7) ← mejor del sistema
-#                 a11=2 y a11=4 excluidos — ambos 0-12.5% hit
 # ---------------------------------------------------------------------------
 DRAW_THRESHOLDS: dict[str, dict] = {
     "Anguila 1PM": {
@@ -96,24 +83,13 @@ DRAW_THRESHOLDS: dict[str, dict] = {
 
 
 def classify_pick(draw: str, best_signal: float | None, best_a11: int | None) -> str:
-    """
-    Clasifica un pick según los umbrales calibrados por sorteo.
-
-    Retorna:
-        "🔥 SEÑAL ÓPTIMA"  — rango peak de ese sorteo
-        "✅ JUGAR"          — rango válido
-        "❌ NO JUGAR"       — fuera de rango (no se notifica)
-    """
     th = DRAW_THRESHOLDS.get(draw)
     if th is None:
         return "❌ NO JUGAR"
-
     bs = best_signal if best_signal is not None else 0.0
     ba = best_a11    if best_a11    is not None else 0
-
     a11_o, sm_o, sx_o = th["optimo"]
     a11_v, sm_v, sx_v = th["valido"]
-
     if ba in a11_o and sm_o <= bs <= sx_o:
         return "🔥 SEÑAL ÓPTIMA"
     if ba in a11_v and sm_v <= bs <= sx_v:
@@ -150,11 +126,15 @@ FORCE_NOTIFY: bool = os.getenv("FORCE_NOTIFY", "0").strip() == "1"
 # ---------------------------------------------------------------------------
 # Fuente histórica
 # ---------------------------------------------------------------------------
-MIN_SOURCE_ROWS           = 1500
-MAX_SOURCE_ROWS           = 2400
-RECENT_DAYS_CAP           = 180
-FIRST_TARGET_RECENT_DAYS  = 120
+MIN_SOURCE_ROWS             = 1500
+MAX_SOURCE_ROWS             = 2400
+RECENT_DAYS_CAP             = 180
+FIRST_TARGET_RECENT_DAYS    = 120
 MIN_OBS_FOR_STRICT_NUM_MASK = 5
+
+# Máximo de días que el backfill dinámico intentará recuperar.
+# Evita loops infinitos si el XLSX está vacío o muy antiguo.
+MAX_BACKFILL_DAYS = 400
 
 # ---------------------------------------------------------------------------
 # Pesos del score
@@ -348,7 +328,7 @@ def _get_history_df(lottery: str) -> pd.DataFrame:
                 df["sorteo"] = df["sorteo"].astype(str)
                 _xlsx_cache[lottery] = df
             except Exception:
-                _xlsx_cache[loyalty] = pd.DataFrame()
+                _xlsx_cache[lottery] = pd.DataFrame()
         else:
             _xlsx_cache[lottery] = pd.DataFrame()
     return _xlsx_cache[lottery]
@@ -380,6 +360,56 @@ def _get_row_for_date(lottery: str, draw: str, date_str: str) -> tuple[str, str,
             normalize_2d(str(r["tercero"])))
 
 # ===========================================================================
+# Backfill dinámico — calcula el gap real desde el XLSX
+# ===========================================================================
+
+def compute_max_days_back() -> int:
+    """
+    v5: Lee cada XLSX y encuentra la fecha más antigua del último registro
+    por sorteo. Calcula cuántos días faltan desde esa fecha hasta hoy.
+
+    Retorna el máximo de días faltantes entre todos los sorteos del SCHEDULE,
+    limitado a MAX_BACKFILL_DAYS para evitar loops excesivos.
+
+    Ejemplo:
+        Anguila 1PM: última fecha 2026-06-15 → gap = 123 días
+        Gana Más:    última fecha 2026-08-20 → gap =  57 días
+        → retorna 123
+    """
+    today = now_rd().date()
+    max_gap = 7  # mínimo razonable aunque todo esté al día
+
+    for item in SCHEDULE:
+        lottery = item["lottery"]
+        draw    = item["draw"]
+        df = _get_history_df(lottery)
+        if df.empty:
+            max_gap = max(max_gap, MAX_BACKFILL_DAYS)
+            continue
+        required = {"fecha", "sorteo"}
+        if not required.issubset(df.columns):
+            continue
+        mask = df["sorteo"] == draw
+        if not mask.any():
+            max_gap = max(max_gap, MAX_BACKFILL_DAYS)
+            continue
+        draw_df = df[mask].copy()
+        draw_df["_fecha_dt"] = pd.to_datetime(draw_df["fecha"], errors="coerce")
+        draw_df = draw_df.dropna(subset=["_fecha_dt"])
+        if draw_df.empty:
+            max_gap = max(max_gap, MAX_BACKFILL_DAYS)
+            continue
+        last_date: date_type = draw_df["_fecha_dt"].max().date()
+        gap = (today - last_date).days
+        if gap > 0:
+            print(f"[INFO] Gap detectado: {draw} — última fecha {last_date} ({gap} días atrás)")
+        max_gap = max(max_gap, gap)
+
+    result = min(max_gap, MAX_BACKFILL_DAYS)
+    print(f"[INFO] compute_max_days_back() → {result} días (cap={MAX_BACKFILL_DAYS})")
+    return result
+
+# ===========================================================================
 # Actualización y backfill
 # ===========================================================================
 
@@ -394,7 +424,6 @@ def try_update_one(item: dict, state: dict) -> bool:
         return False
     p1, p2, p3 = fetch_result(item["lottery"], item["draw"], date_str)
     p1, p2, p3 = normalize_2d(p1), normalize_2d(p2), normalize_2d(p3)
-    # FIX v4: ventana anti-duplicado reducida 90→45 min
     yday = (now_rd().date() - timedelta(days=1)).strftime("%Y-%m-%d")
     yres = _get_row_for_date(item["lottery"], item["draw"], yday)
     if yres is not None and (p1, p2, p3) == yres:
@@ -417,9 +446,8 @@ def _missing_for_date(date_str: str) -> list[dict]:
 
 def _try_update_for_date(item: dict, date_str: str, state: dict) -> bool:
     """
-    FIX v4: Para fechas PASADAS no aplica verificación 'igual al de ayer'.
-    Esa verificación era correcta solo para el día de hoy (resultado recién publicado).
-    Para fechas anteriores, si el scraper devuelve un resultado, es el correcto.
+    Para fechas PASADAS no aplica verificación 'igual al de ayer'.
+    Solo aplica para el día de HOY (resultado recién publicado).
     """
     key = f"{date_str}|{item['lottery']}|{item['draw']}"
     last_updates = state.setdefault("last_updates", {})
@@ -428,14 +456,12 @@ def _try_update_for_date(item: dict, date_str: str, state: dict) -> bool:
         return False
     p1, p2, p3 = fetch_result(item["lottery"], item["draw"], date_str)
     p1, p2, p3 = normalize_2d(p1), normalize_2d(p2), normalize_2d(p3)
-    # Solo verificar "igual al de ayer" si estamos procesando el día de HOY
     if date_str == today_str():
         yday = (now_rd().date() - timedelta(days=1)).strftime("%Y-%m-%d")
         yres = _get_row_for_date(item["lottery"], item["draw"], yday)
         if yres is not None and (p1, p2, p3) == yres:
             if now_rd() < (_due_dt(item) + timedelta(minutes=45)):
                 raise RuntimeError(f"[{date_str}] Resultado idéntico al de ayer — posiblemente no publicado aún.")
-    # Para fechas pasadas: guardar directamente sin verificación de duplicado temporal
     new_row = pd.DataFrame([{"fecha": date_str, "sorteo": item["draw"],
                               "primero": p1, "segundo": p2, "tercero": p3}])
     ensure_dir(HIST_DIR)
@@ -448,26 +474,29 @@ def force_refresh_backfill(state: dict, days_back: int = 7,
                             max_attempts: int = 5,
                             backoff_seconds: list[int] | None = None) -> dict:
     """
-    FIX v4: days_back aumentado a 7 (antes era 1) para recuperar toda la semana.
-    El log ahora imprime todos los errores de scraper con [ERROR] para que
-    sean visibles en el tail del log de Gitea Actions.
+    v5: days_back es calculado dinámicamente por compute_max_days_back()
+    en main() — cubre el gap real desde la última fecha del XLSX hasta hoy.
     """
     if backoff_seconds is None:
         backoff_seconds = [2, 5, 10, 20, 30]
     base = now_rd().date()
     dates = [(base - timedelta(days=i)).strftime("%Y-%m-%d") for i in range(days_back + 1)]
 
-    # Diagnóstico inicial: qué falta
+    # Diagnóstico inicial
     missing_summary: list[str] = []
     for ds in dates:
         for item in _missing_for_date(ds):
             missing_summary.append(f"{ds}|{item['lottery']}|{item['draw']}")
+
     if missing_summary:
         print(f"[INFO] Backfill: {len(missing_summary)} entradas faltantes en {days_back} días:")
-        for m in missing_summary[:20]:
+        for m in missing_summary[:30]:
             print(f"[INFO]   FALTA: {m}")
+        if len(missing_summary) > 30:
+            print(f"[INFO]   ... y {len(missing_summary) - 30} más")
     else:
-        print("[INFO] Backfill: historial completo para los últimos 7 días.")
+        print(f"[INFO] Backfill: historial completo para los últimos {days_back} días.")
+        return state
 
     for attempt in range(max_attempts):
         any_fixed = False
@@ -478,13 +507,14 @@ def force_refresh_backfill(state: dict, days_back: int = 7,
                         any_fixed = True
                         print(f"[OK] Backfilled: {ds} | {item['lottery']} {item['draw']}")
                 except Exception as e:
-                    # FIX v4: [ERROR] en vez de [WARN] para visibilidad en logs
                     print(f"[ERROR] Backfill {ds}|{item['lottery']}|{item['draw']}: {type(e).__name__}: {e}")
-        if not any_fixed and attempt < max_attempts - 1:
-            wait = backoff_seconds[min(attempt, len(backoff_seconds) - 1)]
-            print(f"[INFO] Backfill esperando {wait}s...")
-            time.sleep(wait)
-        elif not any_fixed:
+        if not any_fixed:
+            if attempt < max_attempts - 1:
+                wait = backoff_seconds[min(attempt, len(backoff_seconds) - 1)]
+                print(f"[INFO] Backfill sin avance, esperando {wait}s...")
+                time.sleep(wait)
+            else:
+                print("[INFO] Backfill: máximo de intentos alcanzado.")
             break
     return state
 
@@ -636,7 +666,10 @@ def grade_picks_from_histories() -> None:
     any_graded = False
 
     for _, r in pending.iterrows():
-        date_s, lottery, draw, key = r.get("date",""), r.get("lottery",""), r.get("draw",""), r.get("key","")
+        date_s = r.get("date", "")
+        lottery = r.get("lottery", "")
+        draw = r.get("draw", "")
+        key = r.get("key", "")
         hx = _get_history_df(lottery)
         if hx.empty:
             continue
@@ -652,12 +685,12 @@ def grade_picks_from_histories() -> None:
         top12 = _parse_json_list(r.get("top12", "[]"))
         pales = _parse_json_list(r.get("pales", "[]"))
         perf_rows.append({
-            "key": key, "date": date_s, "time_rd": r.get("time_rd",""),
+            "key": key, "date": date_s, "time_rd": r.get("time_rd", ""),
             "lottery": lottery, "draw": draw,
             "result": f"{row_hx['primero']}-{row_hx['segundo']}-{row_hx['tercero']}",
             "best_signal": _sf(r.get("best_signal")), "best_a11": _si(r.get("best_a11")),
-            "decision": r.get("decision",""),
-            "hits_quiniela_topq":  len(set(_parse_json_list(r.get("topq","[]"))) & drawn),
+            "decision": r.get("decision", ""),
+            "hits_quiniela_topq":  len(set(_parse_json_list(r.get("topq", "[]"))) & drawn),
             "hits_quiniela_top12": len(set(top12) & drawn),
             "pale_hits": _pale_hits(pales, drawn),
             "source_rows_hist_used": _sf(r.get("source_rows_hist_used")),
@@ -719,7 +752,7 @@ def analyze_target_and_maybe_notify(
         if draw_datetime_today(it).date() == target_dt.date()
         and draw_datetime_today(it) < target_dt
     }
-    obs_nums       = observed_nums_today_before(target_dt)
+    obs_nums        = observed_nums_today_before(target_dt)
     intraday_counts = intraday_counter_before(target_dt)
 
     target_dt_naive = target_dt.replace(tzinfo=None)
@@ -741,7 +774,7 @@ def analyze_target_and_maybe_notify(
             lag_days=0, top_n=TOPK_FULL, ref_date=ref_date,
             target_weekday=target_weekday, target_bucket=target_bucket,
             last_two_draws=last_two)
-        used_rows = int(recent_mask.sum())
+        used_rows  = int(recent_mask.sum())
         used_pairs = 0
     else:
         base_mask = exp.apply(
@@ -797,7 +830,6 @@ def analyze_target_and_maybe_notify(
         print("[INFO] Datos insuficientes.")
         return None
 
-    # Score híbrido
     n_obs = len(obs_nums)
     rec = rec_hist.copy()
     rec["num"]    = rec["num"].astype(str).map(_norm2)
@@ -939,9 +971,11 @@ def main() -> None:
         except Exception as e:
             print(f"[WARN] update failed {item['lottery']}|{item['draw']}: {e}")
 
-    # FIX v4: days_back=7 para recuperar toda la semana de datos faltantes
+    # v5: backfill dinámico — calcula el gap real desde el XLSX
     try:
-        state = force_refresh_backfill(state, days_back=7, max_attempts=5)
+        days_back = compute_max_days_back()
+        print(f"[INFO] Iniciando backfill de {days_back} días...")
+        state = force_refresh_backfill(state, days_back=days_back, max_attempts=5)
     except Exception as e:
         print(f"[WARN] force_refresh_backfill failed: {e}")
 
