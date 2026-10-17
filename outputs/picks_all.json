@@ -1,63 +1,71 @@
 {
-  "generated_at": "2026-10-17T12:20:05.751955-04:00",
-  "event_key": "2026-10-17|La Primera|Quiniela La Primera",
+  "generated_at": "2026-10-17T13:19:45.523727-04:00",
+  "event_key": "2026-10-17|Anguilla|Anguila 1PM",
   "items": [
     {
-      "generated_at": "2026-10-17T12:20:05.712824-04:00",
-      "event_key": "2026-10-17|La Primera|Quiniela La Primera",
+      "generated_at": "2026-10-17T13:19:44.745800-04:00",
+      "event_key": "2026-10-17|Anguilla|Anguila 1PM",
       "target": {
-        "time_rd": "2026-10-17 13:00",
-        "lottery": "Anguilla",
-        "draw": "Anguila 1PM"
+        "time_rd": "2026-10-17 14:30",
+        "lottery": "La Nacional",
+        "draw": "Loteria Nacional- Gana Más"
       },
       "best_play": {
-        "time_rd": "2026-10-17 13:00",
-        "lottery": "Anguilla",
-        "draw": "Anguila 1PM",
+        "time_rd": "2026-10-17 14:30",
+        "lottery": "La Nacional",
+        "draw": "Loteria Nacional- Gana Más",
         "top12": [
-          "33",
-          "94",
-          "44",
-          "27",
-          "52",
-          "37",
-          "86",
-          "60",
-          "77",
+          "04",
+          "67",
+          "47",
+          "42",
+          "18",
+          "89",
+          "43",
+          "97",
+          "80",
+          "79",
           "57",
-          "02",
-          "24"
+          "77"
         ],
         "topq": [
-          "33",
-          "94",
-          "44"
+          "04",
+          "67",
+          "47"
         ],
         "pales": [
-          "33-94",
-          "33-44",
-          "27-33"
+          "04-67",
+          "04-47",
+          "04-42"
         ],
-        "fingerprint": "ccaec997c6bd44ef",
-        "decision": "❌ NO JUGAR",
-        "best_signal": 0.018658207670122814,
-        "best_a11": 1,
+        "fingerprint": "d527891c48d0999b",
+        "decision": "🔥 SEÑAL ÓPTIMA",
+        "best_signal": 0.014515590639665154,
+        "best_a11": 2,
         "debug": {
-          "today_observed_nums": 3,
-          "source_pairs_today": 1,
-          "source_rows_hist_used": 534,
-          "top12_overlap_prev": 3,
+          "today_observed_nums": 6,
+          "source_pairs_today": 2,
+          "source_rows_hist_used": 1068,
+          "top12_overlap_prev": 2,
           "top_intraday": [
+            [
+              "95",
+              1
+            ],
+            [
+              "62",
+              1
+            ],
+            [
+              "55",
+              1
+            ],
             [
               "72",
               1
             ],
             [
               "94",
-              1
-            ],
-            [
-              "33",
               1
             ]
           ]
