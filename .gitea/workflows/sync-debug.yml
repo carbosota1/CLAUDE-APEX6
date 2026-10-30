@@ -1,0 +1,112 @@
+name: SYNC-DEBUG
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  debug:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITEA_TOKEN }}
+
+      - name: Install pandas/openpyxl
+        run: pip install pandas openpyxl --quiet
+
+      - name: Debug sync LOTMIX
+        env:
+          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+        run: |
+          API="https://gitea.totipicks.com/api/v1"
+          OWNER="edgar26"
+          REPO="CLAUDE-LOTMIX"
+
+          echo "=== TEST API TOKEN ==="
+          HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: token ${GITEA_TOKEN}" \
+            "${API}/repos/${OWNER}/${REPO}")
+          echo "GET repo → HTTP $HTTP"
+
+          echo ""
+          echo "=== TAMAÑOS ACTUALES EN APEX6 ==="
+          ls -lh data/histories/*.xlsx 2>/dev/null || echo "No hay XLSX en data/histories"
+
+          echo ""
+          echo "=== DESCARGANDO XLSX DE LOTMIX ==="
+          for FNAME in "Anguilla history.xlsx" "La Primera History.xlsx" "La nacional history.xlsx"; do
+            ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote('data/histories/${FNAME}', safe='/'))")
+            URL="${API}/repos/${OWNER}/${REPO}/raw/${ENCODED}?token=${GITEA_TOKEN}"
+            echo "URL: $URL"
+            HTTP=$(curl -s -w "\nHTTP:%{http_code}" -o "/tmp/${FNAME}.lotmix" "$URL" | grep "HTTP:")
+            SIZE=$(wc -c < "/tmp/${FNAME}.lotmix" 2>/dev/null || echo 0)
+            echo "  ${FNAME}: $HTTP | bytes=$SIZE"
+          done
+
+          echo ""
+          echo "=== MERGE CON PYTHON ==="
+          python3 - <<'PYEOF'
+import os, sys
+sys.path.insert(0, "src")
+import pandas as pd
+
+files = [
+    ("Anguilla history.xlsx",    "data/histories/Anguilla history.xlsx"),
+    ("La Primera History.xlsx",  "data/histories/La Primera History.xlsx"),
+    ("La nacional history.xlsx", "data/histories/La nacional history.xlsx"),
+]
+
+for fname, dst_path in files:
+    src_path = f"/tmp/{fname}.lotmix"
+    print(f"\n--- {fname} ---")
+    if not os.path.exists(src_path) or os.path.getsize(src_path) < 100:
+        print(f"  [SKIP] archivo no descargado o vacío ({os.path.getsize(src_path) if os.path.exists(src_path) else 'no existe'} bytes)")
+        continue
+
+    try:
+        df_src = pd.read_excel(src_path, dtype=str)
+        df_src.columns = [c.strip().lower() for c in df_src.columns]
+        print(f"  LOTMIX: {len(df_src)} filas | columnas: {list(df_src.columns)}")
+
+        # Contar por sorteo
+        if "sorteo" in df_src.columns:
+            print("  Por sorteo en LOTMIX:")
+            for s, cnt in df_src.groupby("sorteo").size().items():
+                print(f"    {s}: {cnt}")
+
+        if os.path.exists(dst_path):
+            df_dst = pd.read_excel(dst_path, dtype=str)
+            df_dst.columns = [c.strip().lower() for c in df_dst.columns]
+            print(f"  APEX6:  {len(df_dst)} filas")
+            if "sorteo" in df_dst.columns:
+                print("  Por sorteo en APEX6:")
+                for s, cnt in df_dst.groupby("sorteo").size().items():
+                    print(f"    {s}: {cnt}")
+
+            # Merge
+            needed = {"fecha","sorteo","primero","segundo","tercero"}
+            if needed.issubset(set(df_src.columns)) and needed.issubset(set(df_dst.columns)):
+                combined = pd.concat([df_dst, df_src], ignore_index=True)
+                combined = combined.drop_duplicates(subset=["fecha","sorteo"], keep="last")
+                combined = combined.sort_values(["fecha","sorteo"]).reset_index(drop=True)
+                added = len(combined) - len(df_dst)
+                print(f"  Merge: {len(df_dst)} → {len(combined)} filas (+{added})")
+                if "sorteo" in combined.columns:
+                    print("  Por sorteo tras merge:")
+                    for s, cnt in combined.groupby("sorteo").size().items():
+                        delta = cnt - df_dst.groupby("sorteo").size().get(s, 0)
+                        print(f"    {s}: {cnt} (+{delta})")
+            else:
+                print(f"  [WARN] Columnas insuficientes para merge")
+                print(f"    LOTMIX tiene: {list(df_src.columns)}")
+        else:
+            print(f"  APEX6: no existe todavía")
+    except Exception as e:
+        print(f"  [ERROR] {e}")
+PYEOF
