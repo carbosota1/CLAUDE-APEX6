@@ -1,6 +1,9 @@
 name: SYNC-FIX
 
 on:
+  push:
+    paths:
+      - '.gitea/workflows/sync-fix.yml'
   workflow_dispatch:
 
 permissions:
@@ -47,7 +50,7 @@ jobs:
           fi
 
           # Tamaños actuales en APEX6
-          log "[ANTES] Anguilla: $(wc -c < data/histories/'Anguilla history.xlsx' 2>/dev/null || echo 0)B"
+          log "[ANTES] Anguilla: $(wc -c < 'data/histories/Anguilla history.xlsx' 2>/dev/null || echo 0)B"
           log "[ANTES] La Primera: $(wc -c < 'data/histories/La Primera History.xlsx' 2>/dev/null || echo 0)B"
           log "[ANTES] La Nacional: $(wc -c < 'data/histories/La nacional history.xlsx' 2>/dev/null || echo 0)B"
 
@@ -108,7 +111,7 @@ for src_path, dst_path in jobs:
         xls = pd.ExcelFile(src_path, engine="openpyxl")
         log(f"[INFO] {fname} hojas en LOTMIX: {xls.sheet_names}")
         df_src = pd.read_excel(src_path, sheet_name=xls.sheet_names[0], dtype=str, engine="openpyxl")
-        log(f"[INFO] {fname} columnas LOTMIX: {list(df_src.columns)}")
+        log(f"[INFO] {fname} columnas LOTMIX raw: {list(df_src.columns)}")
         df_src.columns = [c.strip().lower() for c in df_src.columns]
         log(f"[INFO] {fname} columnas normalizadas: {list(df_src.columns)}")
 
@@ -133,9 +136,9 @@ for src_path, dst_path in jobs:
 
         df_after = read_history_xlsx(dst_path)
         added = len(df_after) - len(df_old)
-        log(f"[OK] {fname}: {len(df_old)} → {len(df_after)} filas (+{added})")
+        log(f"[OK] {fname}: {len(df_old)} -> {len(df_after)} filas (+{added})")
         by_after = df_after.groupby("sorteo").size().to_dict()
-        log(f"[OK] {fname} después por sorteo: {dict(sorted(by_after.items()))}")
+        log(f"[OK] {fname} despues por sorteo: {dict(sorted(by_after.items()))}")
 
     except Exception as e:
         log(f"[ERROR] {fname}: {e}")
@@ -144,7 +147,7 @@ for src_path, dst_path in jobs:
 log("[DONE] Sync completado")
 PYEOF
 
-          log "[DESPUÉS] Anguilla: $(wc -c < data/histories/'Anguilla history.xlsx' 2>/dev/null || echo 0)B"
+          log "[DESPUÉS] Anguilla: $(wc -c < 'data/histories/Anguilla history.xlsx' 2>/dev/null || echo 0)B"
 
       - name: Commit sync_status + historiales
         run: |
