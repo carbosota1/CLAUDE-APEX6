@@ -1,6 +1,9 @@
 name: SYNC-DEBUG
 
 on:
+  push:
+    paths:
+      - '.gitea/workflows/sync-debug.yml'
   workflow_dispatch:
 
 permissions:
@@ -28,85 +31,78 @@ jobs:
           OWNER="edgar26"
           REPO="CLAUDE-LOTMIX"
 
-          echo "=== TEST API TOKEN ==="
+          echo "=== TEST TOKEN ==="
           HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
             -H "Authorization: token ${GITEA_TOKEN}" \
             "${API}/repos/${OWNER}/${REPO}")
-          echo "GET repo → HTTP $HTTP"
+          echo "HTTP=$HTTP"
 
           echo ""
-          echo "=== TAMAÑOS ACTUALES EN APEX6 ==="
-          ls -lh data/histories/*.xlsx 2>/dev/null || echo "No hay XLSX en data/histories"
+          echo "=== TAMAÑOS XLSX EN APEX6 ==="
+          ls -lh data/histories/*.xlsx 2>/dev/null
 
           echo ""
-          echo "=== DESCARGANDO XLSX DE LOTMIX ==="
+          echo "=== DESCARGANDO DE LOTMIX ==="
           for FNAME in "Anguilla history.xlsx" "La Primera History.xlsx" "La nacional history.xlsx"; do
             ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote('data/histories/${FNAME}', safe='/'))")
-            URL="${API}/repos/${OWNER}/${REPO}/raw/${ENCODED}?token=${GITEA_TOKEN}"
-            echo "URL: $URL"
-            HTTP=$(curl -s -w "\nHTTP:%{http_code}" -o "/tmp/${FNAME}.lotmix" "$URL" | grep "HTTP:")
-            SIZE=$(wc -c < "/tmp/${FNAME}.lotmix" 2>/dev/null || echo 0)
-            echo "  ${FNAME}: $HTTP | bytes=$SIZE"
+            URL="${API}/repos/${OWNER}/${REPO}/raw/${ENCODED}"
+            OUT="/tmp/${FNAME// /_}.xlsx"
+            HTTP=$(curl -s -w "%{http_code}" \
+              -H "Authorization: token ${GITEA_TOKEN}" \
+              -o "$OUT" "$URL")
+            SIZE=$(wc -c < "$OUT" 2>/dev/null || echo 0)
+            echo "  '${FNAME}': HTTP=$HTTP size=${SIZE}B"
           done
 
           echo ""
-          echo "=== MERGE CON PYTHON ==="
+          echo "=== MERGE PYTHON ==="
           python3 - <<'PYEOF'
 import os, sys
 sys.path.insert(0, "src")
 import pandas as pd
+from io_xlsx import upsert_history_xlsx, ensure_dir
 
-files = [
-    ("Anguilla history.xlsx",    "data/histories/Anguilla history.xlsx"),
-    ("La Primera History.xlsx",  "data/histories/La Primera History.xlsx"),
-    ("La nacional history.xlsx", "data/histories/La nacional history.xlsx"),
+jobs = [
+    ("/tmp/Anguilla_history.xlsx",    "data/histories/Anguilla history.xlsx"),
+    ("/tmp/La_Primera_History.xlsx",  "data/histories/La Primera History.xlsx"),
+    ("/tmp/La_nacional_history.xlsx", "data/histories/La nacional history.xlsx"),
 ]
 
-for fname, dst_path in files:
-    src_path = f"/tmp/{fname}.lotmix"
-    print(f"\n--- {fname} ---")
-    if not os.path.exists(src_path) or os.path.getsize(src_path) < 100:
-        print(f"  [SKIP] archivo no descargado o vacío ({os.path.getsize(src_path) if os.path.exists(src_path) else 'no existe'} bytes)")
+for src_path, dst_path in jobs:
+    fname = os.path.basename(dst_path)
+    if not os.path.exists(src_path) or os.path.getsize(src_path) < 1000:
+        print(f"[SKIP] {fname}: no descargado ({os.path.getsize(src_path) if os.path.exists(src_path) else 'no existe'}B)")
         continue
-
     try:
         df_src = pd.read_excel(src_path, dtype=str)
         df_src.columns = [c.strip().lower() for c in df_src.columns]
-        print(f"  LOTMIX: {len(df_src)} filas | columnas: {list(df_src.columns)}")
-
-        # Contar por sorteo
+        print(f"\n[LOTMIX] {fname}: {len(df_src)} filas")
         if "sorteo" in df_src.columns:
-            print("  Por sorteo en LOTMIX:")
-            for s, cnt in df_src.groupby("sorteo").size().items():
-                print(f"    {s}: {cnt}")
+            for s, n in df_src.groupby("sorteo").size().items():
+                print(f"  {s}: {n}")
 
         if os.path.exists(dst_path):
             df_dst = pd.read_excel(dst_path, dtype=str)
             df_dst.columns = [c.strip().lower() for c in df_dst.columns]
-            print(f"  APEX6:  {len(df_dst)} filas")
+            print(f"[APEX6] {fname}: {len(df_dst)} filas")
             if "sorteo" in df_dst.columns:
-                print("  Por sorteo en APEX6:")
-                for s, cnt in df_dst.groupby("sorteo").size().items():
-                    print(f"    {s}: {cnt}")
+                for s, n in df_dst.groupby("sorteo").size().items():
+                    print(f"  {s}: {n}")
 
-            # Merge
-            needed = {"fecha","sorteo","primero","segundo","tercero"}
-            if needed.issubset(set(df_src.columns)) and needed.issubset(set(df_dst.columns)):
-                combined = pd.concat([df_dst, df_src], ignore_index=True)
-                combined = combined.drop_duplicates(subset=["fecha","sorteo"], keep="last")
-                combined = combined.sort_values(["fecha","sorteo"]).reset_index(drop=True)
-                added = len(combined) - len(df_dst)
-                print(f"  Merge: {len(df_dst)} → {len(combined)} filas (+{added})")
-                if "sorteo" in combined.columns:
-                    print("  Por sorteo tras merge:")
-                    for s, cnt in combined.groupby("sorteo").size().items():
-                        delta = cnt - df_dst.groupby("sorteo").size().get(s, 0)
-                        print(f"    {s}: {cnt} (+{delta})")
-            else:
-                print(f"  [WARN] Columnas insuficientes para merge")
-                print(f"    LOTMIX tiene: {list(df_src.columns)}")
-        else:
-            print(f"  APEX6: no existe todavía")
+        before = len(pd.read_excel(dst_path, dtype=str)) if os.path.exists(dst_path) else 0
+        upsert_history_xlsx(dst_path, df_src)
+        after = len(pd.read_excel(dst_path, dtype=str))
+        print(f"[OK] {fname}: {before} → {after} (+{after-before})")
     except Exception as e:
-        print(f"  [ERROR] {e}")
+        import traceback
+        print(f"[ERROR] {fname}: {e}")
+        traceback.print_exc()
 PYEOF
+
+      - name: Commit si hay cambios
+        run: |
+          git config user.name  "gitea-actions[bot]"
+          git config user.email "gitea-actions[bot]@noreply.local"
+          git add data/histories/*.xlsx || true
+          git diff --cached --quiet || git commit -m "fix: sync XLSX desde LOTMIX via debug [skip ci]"
+          git push || true
