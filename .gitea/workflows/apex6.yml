@@ -8,7 +8,7 @@ on:
     - cron: "30 14 * * *"
     - cron: "15 16 * * *"
     - cron: "15 17 * * *"
-    - cron: "50 18 * * *"
+    - cron: "45 18 * * *"
     - cron: "15 22 * * *"
     - cron: "20 1 * * *"
   workflow_dispatch:
@@ -54,66 +54,104 @@ jobs:
           DST="data/histories"
           mkdir -p "$DST"
 
+          echo "=== Sync LOTMIX → APEX6 ==="
+
+          # Test token primero
+          HTTP_TEST=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: token ${GITEA_TOKEN}" \
+            "${API}/repos/${OWNER}/${REPO}")
+          echo "[INFO] Token check → HTTP $HTTP_TEST"
+          if [ "$HTTP_TEST" != "200" ]; then
+            echo "[ERROR] Token inválido o repo no accesible. Abortando sync (el runner continuará sin sync)."
+            exit 0
+          fi
+
           download_xlsx() {
             local remote_path="$1"
-            local local_path="$2"
-            local encoded_path
-            encoded_path=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$remote_path', safe=''))")
-            local url="${API}/repos/${OWNER}/${REPO}/raw/${encoded_path}?token=${GITEA_TOKEN}"
-            echo "[INFO] Descargando ${remote_path}..."
-            HTTP_CODE=$(curl -s -w "%{http_code}" -o "${local_path}.tmp" "$url")
-            if [ "$HTTP_CODE" = "200" ]; then
-              mv "${local_path}.tmp" "${local_path}.lotmix"
-              echo "[OK] Descargado: $(basename $remote_path)"
-            else
-              rm -f "${local_path}.tmp"
-              echo "[WARN] No se pudo descargar ${remote_path} (HTTP $HTTP_CODE)"
+            local out_path="$2"
+            local fname=$(basename "$remote_path")
+            local encoded
+            encoded=$(python3 -c "import urllib.parse; print(urllib.parse.quote('${remote_path}', safe='/'))")
+            local url="${API}/repos/${OWNER}/${REPO}/raw/${encoded}"
+            local http_code
+            http_code=$(curl -s -w "%{http_code}" \
+              -H "Authorization: token ${GITEA_TOKEN}" \
+              -o "${out_path}" "$url")
+            local size=$(wc -c < "${out_path}" 2>/dev/null || echo 0)
+            echo "[INFO] Descarga '${fname}': HTTP=$http_code size=${size}B"
+            if [ "$http_code" != "200" ] || [ "$size" -lt 1000 ]; then
+              rm -f "${out_path}"
+              echo "[WARN] Descarga fallida o archivo vacío para ${fname}"
+              return 1
             fi
+            return 0
           }
 
-          download_xlsx "data/histories/Anguilla history.xlsx"    "$DST/Anguilla history.xlsx"
-          download_xlsx "data/histories/La Primera History.xlsx"  "$DST/La Primera History.xlsx"
-          download_xlsx "data/histories/La nacional history.xlsx" "$DST/La nacional history.xlsx"
+          download_xlsx "data/histories/Anguilla history.xlsx"    "/tmp/anguilla.lotmix.xlsx"
+          download_xlsx "data/histories/La Primera History.xlsx"  "/tmp/laprimera.lotmix.xlsx"
+          download_xlsx "data/histories/La nacional history.xlsx" "/tmp/lanacional.lotmix.xlsx"
 
           python3 - <<'PYEOF'
-          import os, sys
-          sys.path.insert(0, "src")
-          import pandas as pd
-          from io_xlsx import upsert_history_xlsx, ensure_dir
+import os, sys
+sys.path.insert(0, "src")
+import pandas as pd
+from io_xlsx import upsert_history_xlsx, ensure_dir
 
-          dst = "data/histories"
-          ensure_dir(dst)
+dst_dir = "data/histories"
+ensure_dir(dst_dir)
 
-          files = [
-              "Anguilla history.xlsx",
-              "La Primera History.xlsx",
-              "La nacional history.xlsx",
-          ]
+jobs = [
+    ("/tmp/anguilla.lotmix.xlsx",    os.path.join(dst_dir, "Anguilla history.xlsx")),
+    ("/tmp/laprimera.lotmix.xlsx",   os.path.join(dst_dir, "La Primera History.xlsx")),
+    ("/tmp/lanacional.lotmix.xlsx",  os.path.join(dst_dir, "La nacional history.xlsx")),
+]
 
-          for name in files:
-              src_path = os.path.join(dst, name + ".lotmix")
-              dst_path = os.path.join(dst, name)
-              if not os.path.exists(src_path):
-                  print(f"[SKIP] Sin datos de LOTMIX para: {name}")
-                  continue
-              try:
-                  df_src = pd.read_excel(src_path, dtype=str)
-                  df_src.columns = [c.strip().lower() for c in df_src.columns]
-                  if not {"fecha","sorteo","primero","segundo","tercero"}.issubset(df_src.columns):
-                      print(f"[WARN] Columnas inesperadas en {name}: {list(df_src.columns)}")
-                      os.remove(src_path)
-                      continue
-                  rows_before = len(pd.read_excel(dst_path, dtype=str)) if os.path.exists(dst_path) else 0
-                  upsert_history_xlsx(dst_path, df_src)
-                  rows_after = len(pd.read_excel(dst_path, dtype=str))
-                  added = rows_after - rows_before
-                  print(f"[OK] {name}: {rows_before} → {rows_after} filas (+{added} de LOTMIX)")
-                  os.remove(src_path)
-              except Exception as e:
-                  print(f"[ERROR] Merge {name}: {e}")
-                  try: os.remove(src_path)
-                  except: pass
-          PYEOF
+for src_path, dst_path in jobs:
+    fname = os.path.basename(dst_path)
+    if not os.path.exists(src_path):
+        print(f"[SKIP] {fname}: no descargado")
+        continue
+    try:
+        df_src = pd.read_excel(src_path, dtype=str)
+        df_src.columns = [c.strip().lower() for c in df_src.columns]
+        needed = {"fecha","sorteo","primero","segundo","tercero"}
+        if not needed.issubset(df_src.columns):
+            print(f"[WARN] {fname}: columnas inesperadas {list(df_src.columns)}")
+            continue
+
+        rows_before = 0
+        if os.path.exists(dst_path):
+            df_dst = pd.read_excel(dst_path, dtype=str)
+            rows_before = len(df_dst)
+            # Desglose por sorteo antes
+            if "sorteo" in df_dst.columns:
+                before_by = df_dst.groupby("sorteo").size().to_dict()
+            else:
+                before_by = {}
+        else:
+            before_by = {}
+
+        # Desglose LOTMIX
+        if "sorteo" in df_src.columns:
+            lotmix_by = df_src.groupby("sorteo").size().to_dict()
+            print(f"[INFO] {fname} — LOTMIX tiene {len(df_src)} filas:")
+            for s, n in sorted(lotmix_by.items()):
+                apex_n = before_by.get(s, 0)
+                print(f"    {s}: LOTMIX={n} APEX6={apex_n} diff=+{n-apex_n}")
+
+        upsert_history_xlsx(dst_path, df_src)
+
+        df_after = pd.read_excel(dst_path, dtype=str)
+        rows_after = len(df_after)
+        added = rows_after - rows_before
+        print(f"[OK] {fname}: {rows_before} → {rows_after} filas (+{added})")
+        if added == 0:
+            print(f"[INFO] Sin filas nuevas — APEX6 ya estaba actualizado")
+    except Exception as e:
+        import traceback
+        print(f"[ERROR] {fname}: {e}")
+        traceback.print_exc()
+PYEOF
 
       - name: Run APEX6
         env:
