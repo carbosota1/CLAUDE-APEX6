@@ -61,6 +61,7 @@ jobs:
           log "[ANTES] Anguilla: $(wc -c < 'data/histories/Anguilla history.xlsx' 2>/dev/null || echo 0)B"
           log "[ANTES] LaPrimera: $(wc -c < 'data/histories/La Primera History.xlsx' 2>/dev/null || echo 0)B"
           log "[ANTES] LaNacional: $(wc -c < 'data/histories/La nacional history.xlsx' 2>/dev/null || echo 0)B"
+          log "[ANTES] LaSuerte: $(wc -c < 'data/histories/La suerte history.xlsx' 2>/dev/null || echo 0)B"
 
           # Test token
           HTTP_TEST=$(curl -s -o /dev/null -w "%{http_code}" \
@@ -94,9 +95,10 @@ jobs:
             return 0
           }
 
-          download_xlsx "data/histories/Anguilla history.xlsx"    "/tmp/anguilla.lotmix.xlsx"
-          download_xlsx "data/histories/La Primera History.xlsx"  "/tmp/laprimera.lotmix.xlsx"
-          download_xlsx "data/histories/La nacional history.xlsx" "/tmp/lanacional.lotmix.xlsx"
+          download_xlsx "data/histories/Anguilla history.xlsx"      "/tmp/anguilla.lotmix.xlsx"
+          download_xlsx "data/histories/La Primera History.xlsx"    "/tmp/laprimera.lotmix.xlsx"
+          download_xlsx "data/histories/La nacional history.xlsx"   "/tmp/lanacional.lotmix.xlsx"
+          download_xlsx "data/histories/La suerte history.xlsx"     "/tmp/lasuerte.lotmix.xlsx"
 
           python3 -I - <<'PYEOF'
 import os, sys, traceback
@@ -114,9 +116,10 @@ def log(msg):
 dst_dir = "data/histories"
 
 jobs = [
-    ("/tmp/anguilla.lotmix.xlsx",    os.path.join(dst_dir, "Anguilla history.xlsx")),
-    ("/tmp/laprimera.lotmix.xlsx",   os.path.join(dst_dir, "La Primera History.xlsx")),
-    ("/tmp/lanacional.lotmix.xlsx",  os.path.join(dst_dir, "La nacional history.xlsx")),
+    ("/tmp/anguilla.lotmix.xlsx",   os.path.join(dst_dir, "Anguilla history.xlsx")),
+    ("/tmp/laprimera.lotmix.xlsx",  os.path.join(dst_dir, "La Primera History.xlsx")),
+    ("/tmp/lanacional.lotmix.xlsx", os.path.join(dst_dir, "La nacional history.xlsx")),
+    ("/tmp/lasuerte.lotmix.xlsx",   os.path.join(dst_dir, "La suerte history.xlsx")),
 ]
 
 for src_path, dst_path in jobs:
@@ -164,6 +167,7 @@ log("[DONE] Sync completado")
 PYEOF
 
           log "[DESPUÉS] Anguilla: $(wc -c < 'data/histories/Anguilla history.xlsx' 2>/dev/null || echo 0)B"
+          log "[DESPUÉS] LaSuerte: $(wc -c < 'data/histories/La suerte history.xlsx' 2>/dev/null || echo 0)B"
 
       - name: Run APEX6
         env:
