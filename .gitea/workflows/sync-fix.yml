@@ -1,0 +1,158 @@
+name: SYNC-FIX
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITEA_TOKEN }}
+
+      - name: Install dependencies
+        run: pip install --timeout 60 -r requirements.txt
+
+      - name: Sync + Diagnóstico
+        env:
+          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+        run: |
+          API="https://gitea.totipicks.com/api/v1"
+          OWNER="edgar26"
+          REPO="CLAUDE-LOTMIX"
+          DST="data/histories"
+          mkdir -p "$DST"
+          LOG="data/sync_status.txt"
+
+          log() { echo "$1" | tee -a "$LOG"; }
+
+          echo "" > "$LOG"
+          log "=== SYNC-FIX $(date -u) ==="
+
+          # Test token
+          HTTP_TEST=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: token ${GITEA_TOKEN}" \
+            "${API}/repos/${OWNER}/${REPO}")
+          log "[TOKEN] HTTP=$HTTP_TEST"
+          if [ "$HTTP_TEST" != "200" ]; then
+            log "[ERROR] Token no funciona. Abortando."
+            exit 1
+          fi
+
+          # Tamaños actuales en APEX6
+          log "[ANTES] Anguilla: $(wc -c < data/histories/'Anguilla history.xlsx' 2>/dev/null || echo 0)B"
+          log "[ANTES] La Primera: $(wc -c < 'data/histories/La Primera History.xlsx' 2>/dev/null || echo 0)B"
+          log "[ANTES] La Nacional: $(wc -c < 'data/histories/La nacional history.xlsx' 2>/dev/null || echo 0)B"
+
+          download_xlsx() {
+            local remote_path="$1"
+            local out_path="$2"
+            local fname=$(basename "$remote_path")
+            local encoded
+            encoded=$(python3 -c "import urllib.parse; print(urllib.parse.quote('${remote_path}', safe='/'))")
+            local url="${API}/repos/${OWNER}/${REPO}/raw/${encoded}"
+            log "[URL] $url"
+            local http_code
+            http_code=$(curl -s -w "%{http_code}" \
+              -H "Authorization: token ${GITEA_TOKEN}" \
+              -o "${out_path}" "$url")
+            local size=$(wc -c < "${out_path}" 2>/dev/null || echo 0)
+            log "[DESCARGA] '${fname}': HTTP=$http_code size=${size}B"
+            if [ "$http_code" != "200" ] || [ "$size" -lt 1000 ]; then
+              rm -f "${out_path}"
+              log "[WARN] Descarga fallida para ${fname}"
+              return 1
+            fi
+            return 0
+          }
+
+          download_xlsx "data/histories/Anguilla history.xlsx"    "/tmp/anguilla.lotmix.xlsx"
+          download_xlsx "data/histories/La Primera History.xlsx"  "/tmp/laprimera.lotmix.xlsx"
+          download_xlsx "data/histories/La nacional history.xlsx" "/tmp/lanacional.lotmix.xlsx"
+
+          python3 -I - <<'PYEOF'
+import os, sys, traceback
+sys.path.insert(0, "src")
+import pandas as pd
+from io_xlsx import upsert_history_xlsx, ensure_dir, read_history_xlsx
+
+LOG = "data/sync_status.txt"
+
+def log(msg):
+    print(msg)
+    with open(LOG, "a") as f:
+        f.write(msg + "\n")
+
+dst_dir = "data/histories"
+
+jobs = [
+    ("/tmp/anguilla.lotmix.xlsx",    os.path.join(dst_dir, "Anguilla history.xlsx")),
+    ("/tmp/laprimera.lotmix.xlsx",   os.path.join(dst_dir, "La Primera History.xlsx")),
+    ("/tmp/lanacional.lotmix.xlsx",  os.path.join(dst_dir, "La nacional history.xlsx")),
+]
+
+for src_path, dst_path in jobs:
+    fname = os.path.basename(dst_path)
+    if not os.path.exists(src_path):
+        log(f"[SKIP] {fname}: archivo no descargado")
+        continue
+    try:
+        # Leer LOTMIX
+        xls = pd.ExcelFile(src_path, engine="openpyxl")
+        log(f"[INFO] {fname} hojas en LOTMIX: {xls.sheet_names}")
+        df_src = pd.read_excel(src_path, sheet_name=xls.sheet_names[0], dtype=str, engine="openpyxl")
+        log(f"[INFO] {fname} columnas LOTMIX: {list(df_src.columns)}")
+        df_src.columns = [c.strip().lower() for c in df_src.columns]
+        log(f"[INFO] {fname} columnas normalizadas: {list(df_src.columns)}")
+
+        needed = {"fecha","sorteo","primero","segundo","tercero"}
+        missing = needed - set(df_src.columns)
+        if missing:
+            log(f"[WARN] {fname}: faltan columnas {missing}")
+            continue
+
+        df_src = df_src[["fecha","sorteo","primero","segundo","tercero"]].fillna("")
+
+        # Estado actual APEX6
+        df_old = read_history_xlsx(dst_path)
+        log(f"[INFO] {fname} APEX6 tiene {len(df_old)} filas antes del merge")
+        by_sorteo = df_old.groupby("sorteo").size().to_dict()
+        log(f"[INFO] {fname} APEX6 por sorteo: {dict(sorted(by_sorteo.items()))}")
+
+        by_src = df_src.groupby("sorteo").size().to_dict()
+        log(f"[INFO] {fname} LOTMIX por sorteo: {dict(sorted(by_src.items()))}")
+
+        upsert_history_xlsx(dst_path, df_src)
+
+        df_after = read_history_xlsx(dst_path)
+        added = len(df_after) - len(df_old)
+        log(f"[OK] {fname}: {len(df_old)} → {len(df_after)} filas (+{added})")
+        by_after = df_after.groupby("sorteo").size().to_dict()
+        log(f"[OK] {fname} después por sorteo: {dict(sorted(by_after.items()))}")
+
+    except Exception as e:
+        log(f"[ERROR] {fname}: {e}")
+        traceback.print_exc()
+
+log("[DONE] Sync completado")
+PYEOF
+
+          log "[DESPUÉS] Anguilla: $(wc -c < data/histories/'Anguilla history.xlsx' 2>/dev/null || echo 0)B"
+
+      - name: Commit sync_status + historiales
+        run: |
+          git config user.name  "gitea-actions[bot]"
+          git config user.email "gitea-actions[bot]@noreply.local"
+          git add data/histories/*.xlsx data/sync_status.txt || true
+          git diff --cached --quiet || git commit -m "fix: sync LOTMIX histories + status [skip ci]
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0177cB8av35M2vsMhXKgk5P6"
+          for i in 1 2 3 4 5; do git push --force && break || sleep 10; done
