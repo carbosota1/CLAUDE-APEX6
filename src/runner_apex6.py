@@ -1,19 +1,21 @@
 """
 runner_apex6.py — Orquestador principal del sistema APEX6.
 
-v5 — Backfill dinámico: calcula días faltantes desde la última fecha
-     real del XLSX hasta hoy (cubre meses de datos perdidos, no solo 7 días).
+v6 — Agrega La Suerte al SCHEDULE para aumentar SRH de Anguila 1PM y Gana Más.
+     La Suerte (12:30) corre antes de Anguila 1PM (13:00) y Gana Más (14:30),
+     aumentando el prior_pairs y el SRH de esos sorteos de 534→~1602 y 1068→~1541.
 
-     Cambios vs v4:
-     - compute_max_days_back(): lee cada XLSX y encuentra la fecha más antigua
-       del último registro por sorteo — ese es el gap real a recuperar.
-     - force_refresh_backfill: usa ese days_back dinámico en lugar de 7 fijo.
-     - main(): llama compute_max_days_back() antes del backfill y loguea el gap.
+     Cambios vs v5:
+     - XLSX_FILES: agrega "La Suerte" → "La suerte history.xlsx"
+     - SCHEDULE: agrega Quiniela La Suerte (12:30) y Quiniela La Suerte 6PM (18:00)
+     - DRAW_THRESHOLDS: umbrales para La Suerte (umbrales conservadores por ahora)
+     - scraper: La Suerte usa lanacional_scraper.py (misma fuente)
 
-     Cambios vs v3 (mantenidos de v4):
+     Cambios vs v4 (mantenidos de v5):
+     - compute_max_days_back(): backfill dinámico desde la última fecha real del XLSX
+     - force_refresh_backfill: usa days_back dinámico
      - _try_update_for_date: para fechas pasadas NO verifica "igual al de ayer"
      - try_update_one: ventana anti-duplicado 90→45 min
-     - Logging [ERROR] para errores de scraper
 """
 from __future__ import annotations
 
@@ -49,6 +51,7 @@ XLSX_FILES: dict[str, str] = {
     "La Primera":  os.path.join(HIST_DIR, "La Primera History.xlsx"),
     "Anguilla":    os.path.join(HIST_DIR, "Anguilla history.xlsx"),
     "La Nacional": os.path.join(HIST_DIR, "La nacional history.xlsx"),
+    "La Suerte":   os.path.join(HIST_DIR, "La suerte history.xlsx"),  # v6: nuevo
 }
 
 # ---------------------------------------------------------------------------
@@ -79,6 +82,16 @@ DRAW_THRESHOLDS: dict[str, dict] = {
         "optimo": ([3],    0.005, 0.010),
         "valido": ([3],    0.000, 0.010),
     },
+    # v6: La Suerte — umbrales conservadores (sin calibración previa)
+    # El sistema los usará solo como fuente de prior_pairs, no para hacer picks
+    "Quiniela La Suerte": {
+        "optimo": ([6],    0.040, 9.999),
+        "valido": ([6],    0.030, 9.999),
+    },
+    "Quiniela La Suerte 6PM": {
+        "optimo": ([6],    0.040, 9.999),
+        "valido": ([6],    0.030, 9.999),
+    },
 }
 
 
@@ -98,7 +111,7 @@ def classify_pick(draw: str, best_signal: float | None, best_a11: int | None) ->
 
 
 # ---------------------------------------------------------------------------
-# Schedule
+# Schedule — v6: La Suerte como fuente de datos + sus propios sorteos
 # ---------------------------------------------------------------------------
 UPDATE_AFTER = 2
 
@@ -109,7 +122,17 @@ SCHEDULE: list[dict] = [
     {"lottery": "La Primera",  "draw": "Quiniela La Primera",         "time": "12:00", "update_after_minutes": UPDATE_AFTER},
     {"lottery": "La Nacional", "draw": "Loteria Nacional- Gana Más",  "time": "14:30", "update_after_minutes": UPDATE_AFTER},
     {"lottery": "La Nacional", "draw": "Loteria Nacional- Noche",     "time": "21:00", "update_after_minutes": UPDATE_AFTER},
+    # v6: La Suerte — corre ANTES de Anguila 1PM y Gana Más para subir su SRH
+    {"lottery": "La Suerte",   "draw": "Quiniela La Suerte",         "time": "12:30", "update_after_minutes": UPDATE_AFTER},
+    {"lottery": "La Suerte",   "draw": "Quiniela La Suerte 6PM",     "time": "18:00", "update_after_minutes": UPDATE_AFTER},
 ]
+
+# Sorteos que queremos notificar — La Suerte solo alimenta datos, no genera picks principales
+NOTIFY_DRAWS: set[str] = {
+    "Anguila 1PM", "Anguila 6PM", "Anguila 9PM",
+    "Quiniela La Primera",
+    "Loteria Nacional- Gana Más", "Loteria Nacional- Noche",
+}
 
 # ---------------------------------------------------------------------------
 # Parámetros de salida
@@ -133,7 +156,6 @@ FIRST_TARGET_RECENT_DAYS    = 120
 MIN_OBS_FOR_STRICT_NUM_MASK = 5
 
 # Máximo de días que el backfill dinámico intentará recuperar.
-# Evita loops infinitos si el XLSX está vacío o muy antiguo.
 MAX_BACKFILL_DAYS = 400
 
 # ---------------------------------------------------------------------------
@@ -294,6 +316,7 @@ def fetch_result(lottery: str, draw: str, date: str) -> tuple[str, str, str]:
         "Anguilla":    "anguilla_scraper.py",
         "La Primera":  "laprimera_scraper.py",
         "La Nacional": "lanacional_scraper.py",
+        "La Suerte":   "lanacional_scraper.py",  # v6: La Suerte usa el mismo scraper
     }
     if lottery not in file_map:
         raise ValueError(f"Lottery no soportada: {lottery}")
@@ -367,17 +390,9 @@ def compute_max_days_back() -> int:
     """
     v5: Lee cada XLSX y encuentra la fecha más antigua del último registro
     por sorteo. Calcula cuántos días faltan desde esa fecha hasta hoy.
-
-    Retorna el máximo de días faltantes entre todos los sorteos del SCHEDULE,
-    limitado a MAX_BACKFILL_DAYS para evitar loops excesivos.
-
-    Ejemplo:
-        Anguila 1PM: última fecha 2026-06-15 → gap = 123 días
-        Gana Más:    última fecha 2026-08-20 → gap =  57 días
-        → retorna 123
     """
     today = now_rd().date()
-    max_gap = 7  # mínimo razonable aunque todo esté al día
+    max_gap = 7
 
     for item in SCHEDULE:
         lottery = item["lottery"]
@@ -445,10 +460,6 @@ def _missing_for_date(date_str: str) -> list[dict]:
             and not _has_row_for_date(item["lottery"], item["draw"], date_str)]
 
 def _try_update_for_date(item: dict, date_str: str, state: dict) -> bool:
-    """
-    Para fechas PASADAS no aplica verificación 'igual al de ayer'.
-    Solo aplica para el día de HOY (resultado recién publicado).
-    """
     key = f"{date_str}|{item['lottery']}|{item['draw']}"
     last_updates = state.setdefault("last_updates", {})
     if _has_row_for_date(item["lottery"], item["draw"], date_str):
@@ -473,16 +484,11 @@ def _try_update_for_date(item: dict, date_str: str, state: dict) -> bool:
 def force_refresh_backfill(state: dict, days_back: int = 7,
                             max_attempts: int = 5,
                             backoff_seconds: list[int] | None = None) -> dict:
-    """
-    v5: days_back es calculado dinámicamente por compute_max_days_back()
-    en main() — cubre el gap real desde la última fecha del XLSX hasta hoy.
-    """
     if backoff_seconds is None:
         backoff_seconds = [2, 5, 10, 20, 30]
     base = now_rd().date()
     dates = [(base - timedelta(days=i)).strftime("%Y-%m-%d") for i in range(days_back + 1)]
 
-    # Diagnóstico inicial
     missing_summary: list[str] = []
     for ds in dates:
         for item in _missing_for_date(ds):
@@ -537,10 +543,12 @@ def missing_due_updates_before_target(target_dt: datetime) -> list[str]:
 def missing_due_updates_global_today() -> list[str]:
     n = now_rd()
     date_str = today_str()
+    # Solo verifica sorteos de NOTIFY_DRAWS (no bloquear por La Suerte si falla)
     return [
         f"{item['lottery']} | {item['draw']} (due {_due_dt(item).strftime('%H:%M')})"
         for item in SCHEDULE
-        if _is_due(item, n)
+        if item["draw"] in NOTIFY_DRAWS
+        and _is_due(item, n)
         and not _has_row_for_date(item["lottery"], item["draw"], date_str)
     ]
 
@@ -549,7 +557,8 @@ def next_targets_same_time() -> tuple[datetime, list[dict]] | None:
     candidates = [
         (draw_datetime_today(item), item)
         for item in SCHEDULE
-        if draw_datetime_today(item).date() == n.date()
+        if item["draw"] in NOTIFY_DRAWS  # solo targets que notificamos
+        and draw_datetime_today(item).date() == n.date()
         and draw_datetime_today(item) >= (n - timedelta(seconds=UPCOMING_GRACE_SECONDS))
         and (draw_datetime_today(item) - n).total_seconds() <= LOOKAHEAD_MINUTES * 60
     ]
@@ -971,7 +980,7 @@ def main() -> None:
         except Exception as e:
             print(f"[WARN] update failed {item['lottery']}|{item['draw']}: {e}")
 
-    # v5: backfill dinámico — calcula el gap real desde el XLSX
+    # v5: backfill dinámico
     try:
         days_back = compute_max_days_back()
         print(f"[INFO] Iniciando backfill de {days_back} días...")
@@ -1012,7 +1021,12 @@ def main() -> None:
         return
 
     if updated_today:
-        last_event = sorted(updated_today, key=draw_datetime_today)[-1]
+        # Solo loguear draws de NOTIFY_DRAWS para el event_key
+        notify_updated = [it for it in updated_today if it["draw"] in NOTIFY_DRAWS]
+        if notify_updated:
+            last_event = sorted(notify_updated, key=draw_datetime_today)[-1]
+        else:
+            last_event = sorted(updated_today, key=draw_datetime_today)[-1]
         event_key  = f"{today_str()}|{last_event['lottery']}|{last_event['draw']}"
     elif nxt is not None:
         _, pre_targets = nxt
