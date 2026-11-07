@@ -1,4 +1,6 @@
 name: APEX6
+# v6 — La Suerte agregada al SCHEDULE para aumentar SRH de Anguila 1PM y Gana Más
+# reactivated: 2026-11-07
 
 on:
   push:
