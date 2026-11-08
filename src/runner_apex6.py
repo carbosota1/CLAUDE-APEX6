@@ -1,23 +1,14 @@
 """
 runner_apex6.py — Orquestador principal del sistema APEX6.
 
-v6.1 — Reactivación Actions (2026-11-08). Sin cambios funcionales vs v6.
+v6.2 — Fix backfill: cap 30 dias, excluir draws sin XLSX del calculo de gap.
+       La Suerte se llena via sync desde LOTMIX, no por scraper de backfill.
 
-v6 — Agrega La Suerte al SCHEDULE para aumentar SRH de Anguila 1PM y Gana Más.
-     La Suerte (12:30) corre antes de Anguila 1PM (13:00) y Gana Más (14:30),
-     aumentando el prior_pairs y el SRH de esos sorteos de 534→~1602 y 1068→~1541.
+v6.1 — Reactivacion Actions (2026-11-08). Sin cambios funcionales vs v6.
 
-     Cambios vs v5:
-     - XLSX_FILES: agrega "La Suerte" → "La suerte history.xlsx"
-     - SCHEDULE: agrega Quiniela La Suerte (12:30) y Quiniela La Suerte 6PM (18:00)
-     - DRAW_THRESHOLDS: umbrales para La Suerte (umbrales conservadores por ahora)
-     - scraper: La Suerte usa lanacional_scraper.py (misma fuente)
-
-     Cambios vs v4 (mantenidos de v5):
-     - compute_max_days_back(): backfill dinámico desde la última fecha real del XLSX
-     - force_refresh_backfill: usa days_back dinámico
-     - _try_update_for_date: para fechas pasadas NO verifica "igual al de ayer"
-     - try_update_one: ventana anti-duplicado 90→45 min
+v6 — Agrega La Suerte al SCHEDULE para aumentar SRH de Anguila 1PM y Gana Mas.
+     La Suerte (12:30) corre antes de Anguila 1PM (13:00) y Gana Mas (14:30),
+     aumentando el prior_pairs y el SRH de esos sorteos de 534->~1602 y 1068->~1541.
 """
 from __future__ import annotations
 
@@ -53,11 +44,15 @@ XLSX_FILES: dict[str, str] = {
     "La Primera":  os.path.join(HIST_DIR, "La Primera History.xlsx"),
     "Anguilla":    os.path.join(HIST_DIR, "Anguilla history.xlsx"),
     "La Nacional": os.path.join(HIST_DIR, "La nacional history.xlsx"),
-    "La Suerte":   os.path.join(HIST_DIR, "La suerte history.xlsx"),  # v6: nuevo
+    "La Suerte":   os.path.join(HIST_DIR, "La suerte history.xlsx"),  # v6: nuevo — se llena via sync LOTMIX
 }
 
+# Lotteries que se pueden backfillear via scraper.
+# La Suerte NO esta aqui: su historial viene de LOTMIX sync, no de scraper.
+BACKFILL_LOTTERIES: set[str] = {"La Primera", "Anguilla", "La Nacional"}
+
 # ---------------------------------------------------------------------------
-# Umbrales POR SORTEO — calibrados con 255 sorteos propios de APEX6
+# Umbrales POR SORTEO
 # ---------------------------------------------------------------------------
 DRAW_THRESHOLDS: dict[str, dict] = {
     "Anguila 1PM": {
@@ -76,7 +71,7 @@ DRAW_THRESHOLDS: dict[str, dict] = {
         "optimo": ([6],    0.040, 9.999),
         "valido": ([6],    0.030, 9.999),
     },
-    "Loteria Nacional- Gana Más": {
+    "Loteria Nacional- Gana Mas": {
         "optimo": ([2],    0.010, 0.015),
         "valido": ([2],    0.010, 0.020),
     },
@@ -84,7 +79,7 @@ DRAW_THRESHOLDS: dict[str, dict] = {
         "optimo": ([3],    0.005, 0.010),
         "valido": ([3],    0.000, 0.010),
     },
-    # v6: La Suerte — umbrales conservadores (sin calibración previa)
+    # v6: La Suerte
     "Quiniela La Suerte": {
         "optimo": ([6],    0.040, 9.999),
         "valido": ([6],    0.030, 9.999),
@@ -99,20 +94,20 @@ DRAW_THRESHOLDS: dict[str, dict] = {
 def classify_pick(draw: str, best_signal: float | None, best_a11: int | None) -> str:
     th = DRAW_THRESHOLDS.get(draw)
     if th is None:
-        return "❌ NO JUGAR"
+        return "NO JUGAR"
     bs = best_signal if best_signal is not None else 0.0
     ba = best_a11    if best_a11    is not None else 0
     a11_o, sm_o, sx_o = th["optimo"]
     a11_v, sm_v, sx_v = th["valido"]
     if ba in a11_o and sm_o <= bs <= sx_o:
-        return "🔥 SEÑAL ÓPTIMA"
+        return "SENAL OPTIMA"
     if ba in a11_v and sm_v <= bs <= sx_v:
-        return "✅ JUGAR"
-    return "❌ NO JUGAR"
+        return "JUGAR"
+    return "NO JUGAR"
 
 
 # ---------------------------------------------------------------------------
-# Schedule — v6: La Suerte como fuente de datos + sus propios sorteos
+# Schedule
 # ---------------------------------------------------------------------------
 UPDATE_AFTER = 2
 
@@ -121,22 +116,21 @@ SCHEDULE: list[dict] = [
     {"lottery": "Anguilla",    "draw": "Anguila 6PM",                 "time": "18:00", "update_after_minutes": UPDATE_AFTER},
     {"lottery": "Anguilla",    "draw": "Anguila 9PM",                 "time": "21:00", "update_after_minutes": UPDATE_AFTER},
     {"lottery": "La Primera",  "draw": "Quiniela La Primera",         "time": "12:00", "update_after_minutes": UPDATE_AFTER},
-    {"lottery": "La Nacional", "draw": "Loteria Nacional- Gana Más",  "time": "14:30", "update_after_minutes": UPDATE_AFTER},
+    {"lottery": "La Nacional", "draw": "Loteria Nacional- Gana Mas",  "time": "14:30", "update_after_minutes": UPDATE_AFTER},
     {"lottery": "La Nacional", "draw": "Loteria Nacional- Noche",     "time": "21:00", "update_after_minutes": UPDATE_AFTER},
-    # v6: La Suerte — corre ANTES de Anguila 1PM y Gana Más para subir su SRH
+    # v6: La Suerte como fuente de prior_pairs
     {"lottery": "La Suerte",   "draw": "Quiniela La Suerte",         "time": "12:30", "update_after_minutes": UPDATE_AFTER},
     {"lottery": "La Suerte",   "draw": "Quiniela La Suerte 6PM",     "time": "18:00", "update_after_minutes": UPDATE_AFTER},
 ]
 
-# Sorteos que queremos notificar — La Suerte solo alimenta datos, no genera picks principales
 NOTIFY_DRAWS: set[str] = {
     "Anguila 1PM", "Anguila 6PM", "Anguila 9PM",
     "Quiniela La Primera",
-    "Loteria Nacional- Gana Más", "Loteria Nacional- Noche",
+    "Loteria Nacional- Gana Mas", "Loteria Nacional- Noche",
 }
 
 # ---------------------------------------------------------------------------
-# Parámetros de salida
+# Parametros de salida
 # ---------------------------------------------------------------------------
 TOPK_QUINIELA = 3
 TOPK_FULL     = 12
@@ -148,7 +142,7 @@ UPCOMING_GRACE_SECONDS = 10 * 60
 FORCE_NOTIFY: bool = os.getenv("FORCE_NOTIFY", "0").strip() == "1"
 
 # ---------------------------------------------------------------------------
-# Fuente histórica
+# Fuente historica
 # ---------------------------------------------------------------------------
 MIN_SOURCE_ROWS             = 1500
 MAX_SOURCE_ROWS             = 2400
@@ -156,7 +150,8 @@ RECENT_DAYS_CAP             = 180
 FIRST_TARGET_RECENT_DAYS    = 120
 MIN_OBS_FOR_STRICT_NUM_MASK = 5
 
-MAX_BACKFILL_DAYS = 400
+# v6.2: cap de backfill reducido a 30 dias — La Suerte no se backfillea via scraper
+MAX_BACKFILL_DAYS = 30
 
 # ---------------------------------------------------------------------------
 # Pesos del score
@@ -284,7 +279,7 @@ def save_state(state: dict) -> None:
     os.replace(tmp, STATE_PATH)
 
 # ===========================================================================
-# Horarios dinámicos
+# Horarios dinamicos
 # ===========================================================================
 
 def item_time(item: dict) -> str:
@@ -308,7 +303,7 @@ def _is_due(item: dict, now: datetime) -> bool:
     return now >= _due_dt(item)
 
 # ===========================================================================
-# Scraper dinámico
+# Scraper dinamico
 # ===========================================================================
 
 def fetch_result(lottery: str, draw: str, date: str) -> tuple[str, str, str]:
@@ -383,7 +378,8 @@ def _get_row_for_date(lottery: str, draw: str, date_str: str) -> tuple[str, str,
             normalize_2d(str(r["tercero"])))
 
 # ===========================================================================
-# Backfill dinámico
+# Backfill dinamico
+# v6.2: solo calcula gap para lotteries en BACKFILL_LOTTERIES y con XLSX existente
 # ===========================================================================
 
 def compute_max_days_back() -> int:
@@ -393,35 +389,49 @@ def compute_max_days_back() -> int:
     for item in SCHEDULE:
         lottery = item["lottery"]
         draw    = item["draw"]
+
+        # Solo backfillear lotteries que tienen scraper confiable
+        if lottery not in BACKFILL_LOTTERIES:
+            print(f"[INFO] Skip gap calc para {draw} ({lottery} no es backfilleable via scraper)")
+            continue
+
+        # Si el XLSX no existe todavia, skip — no queremos 400 dias de intentos
+        xlsx_path = XLSX_FILES.get(lottery, "")
+        if not xlsx_path or not os.path.exists(xlsx_path):
+            print(f"[INFO] Skip gap calc para {draw} — XLSX no existe aun: {xlsx_path}")
+            continue
+
         df = _get_history_df(lottery)
         if df.empty:
-            max_gap = max(max_gap, MAX_BACKFILL_DAYS)
+            print(f"[INFO] Skip gap calc para {draw} — XLSX vacio")
             continue
+
         required = {"fecha", "sorteo"}
         if not required.issubset(df.columns):
             continue
         mask = df["sorteo"] == draw
         if not mask.any():
-            max_gap = max(max_gap, MAX_BACKFILL_DAYS)
+            # Draw no tiene filas — podria ser nuevo; usar gap minimo
+            print(f"[INFO] Sin filas para {draw} en XLSX — usando gap=7")
+            max_gap = max(max_gap, 7)
             continue
         draw_df = df[mask].copy()
         draw_df["_fecha_dt"] = pd.to_datetime(draw_df["fecha"], errors="coerce")
         draw_df = draw_df.dropna(subset=["_fecha_dt"])
         if draw_df.empty:
-            max_gap = max(max_gap, MAX_BACKFILL_DAYS)
             continue
         last_date: date_type = draw_df["_fecha_dt"].max().date()
         gap = (today - last_date).days
         if gap > 0:
-            print(f"[INFO] Gap detectado: {draw} — última fecha {last_date} ({gap} días atrás)")
+            print(f"[INFO] Gap detectado: {draw} — ultima fecha {last_date} ({gap} dias atras)")
         max_gap = max(max_gap, gap)
 
     result = min(max_gap, MAX_BACKFILL_DAYS)
-    print(f"[INFO] compute_max_days_back() → {result} días (cap={MAX_BACKFILL_DAYS})")
+    print(f"[INFO] compute_max_days_back() -> {result} dias (cap={MAX_BACKFILL_DAYS})")
     return result
 
 # ===========================================================================
-# Actualización y backfill
+# Actualizacion y backfill
 # ===========================================================================
 
 def try_update_one(item: dict, state: dict) -> bool:
@@ -439,7 +449,7 @@ def try_update_one(item: dict, state: dict) -> bool:
     yres = _get_row_for_date(item["lottery"], item["draw"], yday)
     if yres is not None and (p1, p2, p3) == yres:
         if n < (_due_dt(item) + timedelta(minutes=45)):
-            raise RuntimeError(f"Resultado idéntico al de ayer para {item['draw']} — posiblemente aún no publicado.")
+            raise RuntimeError(f"Resultado identico al de ayer para {item['draw']} — posiblemente aun no publicado.")
     new_row = pd.DataFrame([{"fecha": date_str, "sorteo": item["draw"],
                               "primero": p1, "segundo": p2, "tercero": p3}])
     ensure_dir(HIST_DIR)
@@ -451,8 +461,10 @@ def try_update_one(item: dict, state: dict) -> bool:
 def _missing_for_date(date_str: str) -> list[dict]:
     n = now_rd()
     today = today_str()
+    # Solo backfillear draws de lotteries backfilleables
     return [item for item in SCHEDULE
-            if not (date_str == today and not _is_due(item, n))
+            if item["lottery"] in BACKFILL_LOTTERIES
+            and not (date_str == today and not _is_due(item, n))
             and not _has_row_for_date(item["lottery"], item["draw"], date_str)]
 
 def _try_update_for_date(item: dict, date_str: str, state: dict) -> bool:
@@ -468,7 +480,7 @@ def _try_update_for_date(item: dict, date_str: str, state: dict) -> bool:
         yres = _get_row_for_date(item["lottery"], item["draw"], yday)
         if yres is not None and (p1, p2, p3) == yres:
             if now_rd() < (_due_dt(item) + timedelta(minutes=45)):
-                raise RuntimeError(f"[{date_str}] Resultado idéntico al de ayer — posiblemente no publicado aún.")
+                raise RuntimeError(f"[{date_str}] Resultado identico al de ayer — posiblemente no publicado aun.")
     new_row = pd.DataFrame([{"fecha": date_str, "sorteo": item["draw"],
                               "primero": p1, "segundo": p2, "tercero": p3}])
     ensure_dir(HIST_DIR)
@@ -491,13 +503,13 @@ def force_refresh_backfill(state: dict, days_back: int = 7,
             missing_summary.append(f"{ds}|{item['lottery']}|{item['draw']}")
 
     if missing_summary:
-        print(f"[INFO] Backfill: {len(missing_summary)} entradas faltantes en {days_back} días:")
+        print(f"[INFO] Backfill: {len(missing_summary)} entradas faltantes en {days_back} dias:")
         for m in missing_summary[:30]:
             print(f"[INFO]   FALTA: {m}")
         if len(missing_summary) > 30:
-            print(f"[INFO]   ... y {len(missing_summary) - 30} más")
+            print(f"[INFO]   ... y {len(missing_summary) - 30} mas")
     else:
-        print(f"[INFO] Backfill: historial completo para los últimos {days_back} días.")
+        print(f"[INFO] Backfill: historial completo para los ultimos {days_back} dias.")
         return state
 
     for attempt in range(max_attempts):
@@ -516,7 +528,7 @@ def force_refresh_backfill(state: dict, days_back: int = 7,
                 print(f"[INFO] Backfill sin avance, esperando {wait}s...")
                 time.sleep(wait)
             else:
-                print("[INFO] Backfill: máximo de intentos alcanzado.")
+                print("[INFO] Backfill: maximo de intentos alcanzado.")
             break
     return state
 
@@ -564,7 +576,7 @@ def next_targets_same_time() -> tuple[datetime, list[dict]] | None:
     return dt_min, [it for dt, it in candidates if dt == dt_min]
 
 # ===========================================================================
-# Intradía
+# Intraday
 # ===========================================================================
 
 def observed_nums_today_before(target_dt: datetime) -> set[str]:
@@ -734,7 +746,7 @@ def build_exploded_history() -> pd.DataFrame | None:
     return exp.dropna(subset=["fecha_dt"])
 
 # ===========================================================================
-# Análisis + notificación
+# Analisis + notificacion
 # ===========================================================================
 
 def analyze_target_and_maybe_notify(
@@ -917,29 +929,29 @@ def _send_pick_telegram(
     best_signal = bp.get("best_signal")
     best_a11    = bp.get("best_a11")
 
-    if decision == "❌ NO JUGAR" and not FORCE_NOTIFY:
-        print(f"[INFO] {target['draw']} -> NO JUGAR (sin notificación).")
+    if decision == "NO JUGAR" and not FORCE_NOTIFY:
+        print(f"[INFO] {target['draw']} -> NO JUGAR (sin notificacion).")
         return
 
-    nivel_icono = "🔥" if "ÓPTIMA" in decision else "✅"
+    nivel_icono = "F" if "OPTIMA" in decision else "V"
 
     lines = [
-        f"🎯 {SYSTEM_NAME}",
-        f"🧩 Señal: {event_key}",
-        f"📍 {target['lottery']} | {target['draw']}",
-        f"⏰ Hora: {target_dt.strftime('%H:%M')} RD",
+        f"APEX6",
+        f"Senal: {event_key}",
+        f"{target['lottery']} | {target['draw']}",
+        f"Hora: {target_dt.strftime('%H:%M')} RD",
         "",
-        f"{nivel_icono} {decision}",
+        f"{decision}",
         "",
     ]
     if topq:
-        lines += [f"✅ QUINIELA Top{len(topq)}:", ", ".join(topq), ""]
+        lines += [f"QUINIELA Top{len(topq)}:", ", ".join(topq), ""]
     if top12:
-        lines += ["📌 Top12:", ", ".join(top12), ""]
+        lines += ["Top12:", ", ".join(top12), ""]
     if pales:
-        lines += [f"🎲 PALE Top{len(pales)}:", " | ".join(pales), ""]
+        lines += [f"PALE Top{len(pales)}:", " | ".join(pales), ""]
     lines += [
-        "📊 Debug:",
+        "Debug:",
         f"best_signal={best_signal} best_a11={best_a11}",
         f"today_observed_nums={len(obs_nums)} source_rows_hist_used={used_rows}",
     ]
@@ -977,7 +989,7 @@ def main() -> None:
 
     try:
         days_back = compute_max_days_back()
-        print(f"[INFO] Iniciando backfill de {days_back} días...")
+        print(f"[INFO] Iniciando backfill de {days_back} dias...")
         state = force_refresh_backfill(state, days_back=days_back, max_attempts=5)
     except Exception as e:
         print(f"[WARN] force_refresh_backfill failed: {e}")
@@ -990,14 +1002,14 @@ def main() -> None:
 
     missing_due_today = missing_due_updates_global_today()
     if missing_due_today and not FORCE_NOTIFY:
-        print("[INFO] Faltan updates due hoy — skip análisis.")
+        print("[INFO] Faltan updates due hoy — skip analisis.")
         for m in missing_due_today:
             print(f"[INFO]  Missing: {m}")
         wait_key = f"{today_str()}|WAIT|{len(missing_due_today)}"
         if state.get("last_wait_key") != wait_key:
             try:
-                lines = [f"⏳ {SYSTEM_NAME} (Esperando resultados)", "",
-                         "Faltan:", *[f"• {x}" for x in missing_due_today[:20]]]
+                lines = [f"APEX6 (Esperando resultados)", "",
+                         "Faltan:", *[f"- {x}" for x in missing_due_today[:20]]]
                 send_telegram("\n".join(lines))
                 state["last_wait_key"] = wait_key
             except Exception as e:
@@ -1009,7 +1021,7 @@ def main() -> None:
     nxt = next_targets_same_time()
 
     if not updated_today and nxt is None and not FORCE_NOTIFY:
-        print("[INFO] Sin nuevos updates y sin targets próximos — skip.")
+        print("[INFO] Sin nuevos updates y sin targets proximos — skip.")
         save_state(state)
         print("[OK] runner finished")
         return
@@ -1042,7 +1054,7 @@ def main() -> None:
         return
 
     if nxt is None:
-        print("[INFO] Sin targets próximos.")
+        print("[INFO] Sin targets proximos.")
         state["last_event_key"] = event_key
         save_state(state)
         print("[OK] runner finished")
