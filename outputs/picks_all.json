@@ -1,122 +1,52 @@
 {
-  "generated_at": "2026-11-08T16:38:20.059018-04:00",
-  "event_key": "2026-11-08|PRE|Anguilla|Anguila 6PM+La Nacional|Loteria Nacional- Noche",
+  "generated_at": "2026-11-08T18:36:49.125420-04:00",
+  "event_key": "2026-11-08|La Nacional|Loteria Nacional- Noche",
   "items": [
     {
-      "generated_at": "2026-11-08T16:38:13.808719-04:00",
-      "event_key": "2026-11-08|PRE|Anguilla|Anguila 6PM+La Nacional|Loteria Nacional- Noche",
+      "generated_at": "2026-11-08T18:36:48.351787-04:00",
+      "event_key": "2026-11-08|La Nacional|Loteria Nacional- Noche",
       "target": {
-        "time_rd": "2026-11-08 18:00",
+        "time_rd": "2026-11-08 21:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 6PM"
+        "draw": "Anguila 9PM"
       },
       "best_play": {
-        "time_rd": "2026-11-08 18:00",
+        "time_rd": "2026-11-08 21:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 6PM",
+        "draw": "Anguila 9PM",
         "top12": [
-          "54",
-          "46",
-          "33",
-          "78",
-          "92",
-          "26",
+          "03",
+          "20",
+          "60",
+          "63",
+          "30",
+          "15",
+          "50",
+          "69",
+          "02",
+          "87",
           "18",
-          "61",
-          "59",
-          "42",
-          "29",
-          "66"
-        ],
-        "topq": [
-          "54",
-          "46",
-          "33"
-        ],
-        "pales": [
-          "46-54",
-          "33-54",
-          "54-78"
-        ],
-        "fingerprint": "3318b026e82b78de",
-        "decision": "NO JUGAR",
-        "best_signal": 0.005565152171497872,
-        "best_a11": 2,
-        "debug": {
-          "today_observed_nums": 6,
-          "source_pairs_today": 4,
-          "source_rows_hist_used": 1068,
-          "top12_overlap_prev": 2,
-          "top_intraday": [
-            [
-              "98",
-              1
-            ],
-            [
-              "20",
-              1
-            ],
-            [
-              "63",
-              1
-            ],
-            [
-              "60",
-              1
-            ],
-            [
-              "30",
-              1
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "generated_at": "2026-11-08T16:38:19.317144-04:00",
-      "event_key": "2026-11-08|PRE|Anguilla|Anguila 6PM+La Nacional|Loteria Nacional- Noche",
-      "target": {
-        "time_rd": "2026-11-08 18:00",
-        "lottery": "La Nacional",
-        "draw": "Loteria Nacional- Noche"
-      },
-      "best_play": {
-        "time_rd": "2026-11-08 18:00",
-        "lottery": "La Nacional",
-        "draw": "Loteria Nacional- Noche",
-        "top12": [
-          "75",
-          "81",
-          "48",
-          "28",
-          "11",
-          "19",
-          "00",
-          "67",
-          "76",
-          "61",
-          "59",
-          "78"
-        ],
-        "topq": [
-          "75",
-          "81",
           "48"
         ],
-        "pales": [
-          "75-81",
-          "48-75",
-          "28-75"
+        "topq": [
+          "03",
+          "20",
+          "60"
         ],
-        "fingerprint": "2df738f628d5848d",
-        "decision": "NO JUGAR",
-        "best_signal": 0.02296272221875392,
-        "best_a11": 2,
+        "pales": [
+          "03-20",
+          "03-60",
+          "03-63"
+        ],
+        "fingerprint": "3dfe5c209906b7b2",
+        "decision": "JUGAR",
+        "best_signal": 0.001765816074033005,
+        "best_a11": 3,
         "debug": {
-          "today_observed_nums": 6,
-          "source_pairs_today": 4,
-          "source_rows_hist_used": 1068,
-          "top12_overlap_prev": 3,
+          "today_observed_nums": 12,
+          "source_pairs_today": 7,
+          "source_rows_hist_used": 2021,
+          "top12_overlap_prev": 1,
           "top_intraday": [
             [
               "98",
@@ -131,11 +61,11 @@
               1
             ],
             [
-              "60",
+              "03",
               1
             ],
             [
-              "30",
+              "84",
               1
             ]
           ]
