@@ -1,6 +1,8 @@
 """
 runner_apex6.py — Orquestador principal del sistema APEX6.
 
+v6.1 — Reactivación Actions (2026-11-08). Sin cambios funcionales vs v6.
+
 v6 — Agrega La Suerte al SCHEDULE para aumentar SRH de Anguila 1PM y Gana Más.
      La Suerte (12:30) corre antes de Anguila 1PM (13:00) y Gana Más (14:30),
      aumentando el prior_pairs y el SRH de esos sorteos de 534→~1602 y 1068→~1541.
@@ -83,7 +85,6 @@ DRAW_THRESHOLDS: dict[str, dict] = {
         "valido": ([3],    0.000, 0.010),
     },
     # v6: La Suerte — umbrales conservadores (sin calibración previa)
-    # El sistema los usará solo como fuente de prior_pairs, no para hacer picks
     "Quiniela La Suerte": {
         "optimo": ([6],    0.040, 9.999),
         "valido": ([6],    0.030, 9.999),
@@ -155,7 +156,6 @@ RECENT_DAYS_CAP             = 180
 FIRST_TARGET_RECENT_DAYS    = 120
 MIN_OBS_FOR_STRICT_NUM_MASK = 5
 
-# Máximo de días que el backfill dinámico intentará recuperar.
 MAX_BACKFILL_DAYS = 400
 
 # ---------------------------------------------------------------------------
@@ -316,7 +316,7 @@ def fetch_result(lottery: str, draw: str, date: str) -> tuple[str, str, str]:
         "Anguilla":    "anguilla_scraper.py",
         "La Primera":  "laprimera_scraper.py",
         "La Nacional": "lanacional_scraper.py",
-        "La Suerte":   "lanacional_scraper.py",  # v6: La Suerte usa el mismo scraper
+        "La Suerte":   "lanacional_scraper.py",
     }
     if lottery not in file_map:
         raise ValueError(f"Lottery no soportada: {lottery}")
@@ -383,14 +383,10 @@ def _get_row_for_date(lottery: str, draw: str, date_str: str) -> tuple[str, str,
             normalize_2d(str(r["tercero"])))
 
 # ===========================================================================
-# Backfill dinámico — calcula el gap real desde el XLSX
+# Backfill dinámico
 # ===========================================================================
 
 def compute_max_days_back() -> int:
-    """
-    v5: Lee cada XLSX y encuentra la fecha más antigua del último registro
-    por sorteo. Calcula cuántos días faltan desde esa fecha hasta hoy.
-    """
     today = now_rd().date()
     max_gap = 7
 
@@ -543,7 +539,6 @@ def missing_due_updates_before_target(target_dt: datetime) -> list[str]:
 def missing_due_updates_global_today() -> list[str]:
     n = now_rd()
     date_str = today_str()
-    # Solo verifica sorteos de NOTIFY_DRAWS (no bloquear por La Suerte si falla)
     return [
         f"{item['lottery']} | {item['draw']} (due {_due_dt(item).strftime('%H:%M')})"
         for item in SCHEDULE
@@ -557,7 +552,7 @@ def next_targets_same_time() -> tuple[datetime, list[dict]] | None:
     candidates = [
         (draw_datetime_today(item), item)
         for item in SCHEDULE
-        if item["draw"] in NOTIFY_DRAWS  # solo targets que notificamos
+        if item["draw"] in NOTIFY_DRAWS
         and draw_datetime_today(item).date() == n.date()
         and draw_datetime_today(item) >= (n - timedelta(seconds=UPCOMING_GRACE_SECONDS))
         and (draw_datetime_today(item) - n).total_seconds() <= LOOKAHEAD_MINUTES * 60
@@ -980,7 +975,6 @@ def main() -> None:
         except Exception as e:
             print(f"[WARN] update failed {item['lottery']}|{item['draw']}: {e}")
 
-    # v5: backfill dinámico
     try:
         days_back = compute_max_days_back()
         print(f"[INFO] Iniciando backfill de {days_back} días...")
@@ -1021,7 +1015,6 @@ def main() -> None:
         return
 
     if updated_today:
-        # Solo loguear draws de NOTIFY_DRAWS para el event_key
         notify_updated = [it for it in updated_today if it["draw"] in NOTIFY_DRAWS]
         if notify_updated:
             last_event = sorted(notify_updated, key=draw_datetime_today)[-1]
