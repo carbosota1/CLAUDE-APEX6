@@ -1,5 +1,5 @@
 name: APEX6
-# v6.1 — fix push trigger, La Suerte en SCHEDULE
+# v6.2 — fix YAML heredoc, La Suerte en SCHEDULE
 # reactivated: 2026-11-08
 
 on:
@@ -19,7 +19,7 @@ on:
   workflow_dispatch:
     inputs:
       force_notify:
-        description: "Forzar notificación Telegram (FORCE_NOTIFY=1)"
+        description: "Forzar notificacion Telegram (FORCE_NOTIFY=1)"
         required: false
         default: "0"
         type: choice
@@ -45,7 +45,7 @@ jobs:
         run: |
           for i in 1 2 3 4 5; do
             pip install --timeout 60 -r requirements.txt && break
-            echo "pip install falló, reintentando en 10s..."
+            echo "pip install fallo, reintentando en 10s..."
             sleep 10
           done
 
@@ -61,14 +61,8 @@ jobs:
           LOG="data/sync_status.txt"
 
           log() { echo "$1" | tee -a "$LOG"; }
-
           echo "=== Sync LOTMIX $(date -u) ===" > "$LOG"
-          log "[ANTES] Anguilla: $(wc -c < 'data/histories/Anguilla history.xlsx' 2>/dev/null || echo 0)B"
-          log "[ANTES] LaPrimera: $(wc -c < 'data/histories/La Primera History.xlsx' 2>/dev/null || echo 0)B"
-          log "[ANTES] LaNacional: $(wc -c < 'data/histories/La nacional history.xlsx' 2>/dev/null || echo 0)B"
-          log "[ANTES] LaSuerte: $(wc -c < 'data/histories/La suerte history.xlsx' 2>/dev/null || echo 0)B"
 
-          # Test token
           HTTP_TEST=$(curl -s -o /dev/null -w "%{http_code}" \
             -H "Authorization: token ${GITEA_TOKEN}" \
             "${API}/repos/${OWNER}/${REPO}")
@@ -105,72 +99,7 @@ jobs:
           download_xlsx "data/histories/La nacional history.xlsx"   "/tmp/lanacional.lotmix.xlsx"
           download_xlsx "data/histories/La suerte history.xlsx"     "/tmp/lasuerte.lotmix.xlsx"
 
-          python3 -I - <<'PYEOF'
-import os, sys, traceback
-sys.path.insert(0, "src")
-import pandas as pd
-from io_xlsx import upsert_history_xlsx, ensure_dir, read_history_xlsx
-
-LOG = "data/sync_status.txt"
-
-def log(msg):
-    print(msg)
-    with open(LOG, "a") as f:
-        f.write(msg + "\n")
-
-dst_dir = "data/histories"
-
-jobs = [
-    ("/tmp/anguilla.lotmix.xlsx",   os.path.join(dst_dir, "Anguilla history.xlsx")),
-    ("/tmp/laprimera.lotmix.xlsx",  os.path.join(dst_dir, "La Primera History.xlsx")),
-    ("/tmp/lanacional.lotmix.xlsx", os.path.join(dst_dir, "La nacional history.xlsx")),
-    ("/tmp/lasuerte.lotmix.xlsx",   os.path.join(dst_dir, "La suerte history.xlsx")),
-]
-
-for src_path, dst_path in jobs:
-    fname = os.path.basename(dst_path)
-    if not os.path.exists(src_path):
-        log(f"[SKIP] {fname}: no descargado")
-        continue
-    try:
-        xls_src = pd.ExcelFile(src_path, engine="openpyxl")
-        log(f"[INFO] {fname} hojas LOTMIX: {xls_src.sheet_names}")
-        sheet = "history" if "history" in xls_src.sheet_names else xls_src.sheet_names[0]
-        df_src = pd.read_excel(src_path, sheet_name=sheet, dtype=str, engine="openpyxl")
-        df_src.columns = [c.strip().lower() for c in df_src.columns]
-        log(f"[INFO] {fname} cols LOTMIX: {list(df_src.columns)[:8]}")
-
-        needed = {"fecha","sorteo","primero","segundo","tercero"}
-        missing = needed - set(df_src.columns)
-        if missing:
-            log(f"[WARN] {fname}: faltan cols {missing}")
-            continue
-
-        df_src = df_src[["fecha","sorteo","primero","segundo","tercero"]].fillna("")
-        log(f"[INFO] {fname} LOTMIX filas totales: {len(df_src)}")
-
-        df_old = read_history_xlsx(dst_path)
-        log(f"[INFO] {fname} APEX6 filas antes: {len(df_old)}")
-        by_old = df_old.groupby("sorteo").size().to_dict()
-        by_src = df_src.groupby("sorteo").size().to_dict()
-        for s in sorted(set(by_old) | set(by_src)):
-            log(f"    {s}: APEX6={by_old.get(s,0)} LOTMIX={by_src.get(s,0)} diff=+{by_src.get(s,0)-by_old.get(s,0)}")
-
-        upsert_history_xlsx(dst_path, df_src)
-
-        df_after = read_history_xlsx(dst_path)
-        added = len(df_after) - len(df_old)
-        log(f"[OK] {fname}: {len(df_old)} -> {len(df_after)} filas (+{added})")
-
-    except Exception as e:
-        log(f"[ERROR] {fname}: {e}")
-        traceback.print_exc()
-
-log("[DONE] Sync completado")
-PYEOF
-
-          log "[DESPUÉS] Anguilla: $(wc -c < 'data/histories/Anguilla history.xlsx' 2>/dev/null || echo 0)B"
-          log "[DESPUÉS] LaSuerte: $(wc -c < 'data/histories/La suerte history.xlsx' 2>/dev/null || echo 0)B"
+          python3 -I scripts/sync_histories.py
 
       - name: Run APEX6
         env:
