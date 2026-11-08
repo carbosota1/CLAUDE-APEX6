@@ -880,7 +880,8 @@
     "2026-10-30|Anguilla|Anguila 6PM": "done",
     "2026-10-30|Anguilla|Anguila 9PM": "done",
     "2026-10-30|La Nacional|Loteria Nacional- Noche": "done",
-    "2026-11-08|La Primera|Quiniela La Primera": "done"
+    "2026-11-08|La Primera|Quiniela La Primera": "done",
+    "2026-11-08|Anguilla|Anguila 1PM": "done"
   },
   "last_event_key": "2026-11-08|La Primera|Quiniela La Primera",
   "sent_by_target_fp": {
@@ -1187,7 +1188,7 @@
     "2026-10-29 21:00|La Nacional|Loteria Nacional- Noche": "18d71a76e98b3e1f",
     "2026-10-30 14:30|La Nacional|Loteria Nacional- Gana Más": "0265f0b47ff98906"
   },
-  "last_wait_key": "2026-10-27|WAIT|1",
+  "last_wait_key": "2026-11-08|WAIT|1",
   "last_top12": [
     "60",
     "06",
