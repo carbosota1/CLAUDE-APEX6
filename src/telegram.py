@@ -1,5 +1,6 @@
 """
 telegram.py — Envío de mensajes por Telegram.
+v1.1 — 2026-11-08: sin cambios funcionales; commit para reactivar Actions.
 """
 import os
 import requests
