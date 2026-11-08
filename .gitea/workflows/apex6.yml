@@ -1,11 +1,14 @@
 name: APEX6
-# v6 — La Suerte agregada al SCHEDULE para aumentar SRH de Anguila 1PM y Gana Más
-# reactivated: 2026-11-07
+# v6.1 — fix push trigger, La Suerte en SCHEDULE
+# reactivated: 2026-11-08
 
 on:
   push:
+    branches:
+      - main
     paths-ignore:
-      - '**'
+      - 'data/**'
+      - 'outputs/**'
   schedule:
     - cron: "30 14 * * *"
     - cron: "15 16 * * *"
@@ -130,7 +133,6 @@ for src_path, dst_path in jobs:
         log(f"[SKIP] {fname}: no descargado")
         continue
     try:
-        # Leer LOTMIX respetando hoja 'history' si existe
         xls_src = pd.ExcelFile(src_path, engine="openpyxl")
         log(f"[INFO] {fname} hojas LOTMIX: {xls_src.sheet_names}")
         sheet = "history" if "history" in xls_src.sheet_names else xls_src.sheet_names[0]
@@ -147,7 +149,6 @@ for src_path, dst_path in jobs:
         df_src = df_src[["fecha","sorteo","primero","segundo","tercero"]].fillna("")
         log(f"[INFO] {fname} LOTMIX filas totales: {len(df_src)}")
 
-        # Estado actual APEX6
         df_old = read_history_xlsx(dst_path)
         log(f"[INFO] {fname} APEX6 filas antes: {len(df_old)}")
         by_old = df_old.groupby("sorteo").size().to_dict()
