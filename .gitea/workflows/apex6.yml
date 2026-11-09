@@ -21,7 +21,7 @@ on:
       force_notify:
         description: "Forzar notificacion Telegram (FORCE_NOTIFY=1)"
         required: false
-        default: "0"
+        default: "1"
         type: choice
         options:
           - "0"
