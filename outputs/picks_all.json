@@ -1,44 +1,44 @@
 {
-  "generated_at": "2026-11-10T12:17:15.895626-04:00",
-  "event_key": "2026-11-10|La Primera|Quiniela La Primera",
+  "generated_at": "2026-11-11T12:17:29.839745-04:00",
+  "event_key": "2026-11-11|La Primera|Quiniela La Primera",
   "items": [
     {
-      "generated_at": "2026-11-10T12:17:15.853404-04:00",
-      "event_key": "2026-11-10|La Primera|Quiniela La Primera",
+      "generated_at": "2026-11-11T12:17:29.797596-04:00",
+      "event_key": "2026-11-11|La Primera|Quiniela La Primera",
       "target": {
-        "time_rd": "2026-11-10 13:00",
+        "time_rd": "2026-11-11 13:00",
         "lottery": "Anguilla",
         "draw": "Anguila 1PM"
       },
       "best_play": {
-        "time_rd": "2026-11-10 13:00",
+        "time_rd": "2026-11-11 13:00",
         "lottery": "Anguilla",
         "draw": "Anguila 1PM",
         "top12": [
+          "79",
+          "21",
+          "64",
+          "46",
+          "59",
+          "03",
           "40",
-          "86",
-          "09",
-          "65",
-          "82",
           "52",
-          "60",
           "57",
-          "84",
-          "77",
-          "93",
-          "08"
+          "60",
+          "65",
+          "82"
         ],
         "topq": [
-          "40",
-          "86",
-          "09"
+          "79",
+          "21",
+          "64"
         ],
         "pales": [
-          "40-86",
-          "09-40",
-          "40-65"
+          "21-79",
+          "64-79",
+          "46-79"
         ],
-        "fingerprint": "b5a7bf67a7b17e4f",
+        "fingerprint": "4f8903dfd8d960af",
         "decision": "NO JUGAR",
         "best_signal": 0.010201503644498157,
         "best_a11": 1,
@@ -46,18 +46,18 @@
           "today_observed_nums": 3,
           "source_pairs_today": 2,
           "source_rows_hist_used": 534,
-          "top12_overlap_prev": 7,
+          "top12_overlap_prev": 6,
           "top_intraday": [
             [
-              "27",
+              "16",
               1
             ],
             [
-              "66",
+              "55",
               1
             ],
             [
-              "18",
+              "29",
               1
             ]
           ]
