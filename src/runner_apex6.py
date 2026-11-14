@@ -1,6 +1,10 @@
 """
 runner_apex6.py — Orquestador principal del sistema APEX6.
 
+v6.3 — Fix tilde "Gana Más" y La Suerte no bloquea gate de picks.
+       Bug 1: SCHEDULE tenia "Gana Mas" sin tilde pero el XLSX lo guarda con tilde.
+       Bug 2: La Suerte (sync-only) bloqueaba picks de sorteos posteriores.
+
 v6.2 — Fix backfill: cap 30 dias, excluir draws sin XLSX del calculo de gap.
        La Suerte se llena via sync desde LOTMIX, no por scraper de backfill.
 
@@ -8,7 +12,7 @@ v6.1 — Reactivacion Actions (2026-11-08). Sin cambios funcionales vs v6.
 
 v6 — Agrega La Suerte al SCHEDULE para aumentar SRH de Anguila 1PM y Gana Mas.
      La Suerte (12:30) corre antes de Anguila 1PM (13:00) y Gana Mas (14:30),
-     aumentando el prior_pairs y el SRH de esos sorteos de 534->~1602 y 1068->~1541.
+     aumentando el prior_pairs y el SRH de esos sorteos.
 """
 from __future__ import annotations
 
@@ -51,6 +55,10 @@ XLSX_FILES: dict[str, str] = {
 # La Suerte NO esta aqui: su historial viene de LOTMIX sync, no de scraper.
 BACKFILL_LOTTERIES: set[str] = {"La Primera", "Anguilla", "La Nacional"}
 
+# Lotteries que llegan SOLO via sync externo (no tienen scraper en tiempo real).
+# Estos no deben bloquear el gate de picks de sorteos posteriores.
+SYNC_ONLY_LOTTERIES: set[str] = {"La Suerte"}
+
 # ---------------------------------------------------------------------------
 # Umbrales POR SORTEO
 # ---------------------------------------------------------------------------
@@ -71,7 +79,7 @@ DRAW_THRESHOLDS: dict[str, dict] = {
         "optimo": ([6],    0.040, 9.999),
         "valido": ([6],    0.030, 9.999),
     },
-    "Loteria Nacional- Gana Mas": {
+    "Loteria Nacional- Gana Más": {          # v6.3: con tilde (igual que scraper y XLSX)
         "optimo": ([2],    0.010, 0.015),
         "valido": ([2],    0.010, 0.020),
     },
@@ -112,21 +120,21 @@ def classify_pick(draw: str, best_signal: float | None, best_a11: int | None) ->
 UPDATE_AFTER = 2
 
 SCHEDULE: list[dict] = [
-    {"lottery": "Anguilla",    "draw": "Anguila 1PM",                 "time": "13:00", "update_after_minutes": UPDATE_AFTER},
-    {"lottery": "Anguilla",    "draw": "Anguila 6PM",                 "time": "18:00", "update_after_minutes": UPDATE_AFTER},
-    {"lottery": "Anguilla",    "draw": "Anguila 9PM",                 "time": "21:00", "update_after_minutes": UPDATE_AFTER},
-    {"lottery": "La Primera",  "draw": "Quiniela La Primera",         "time": "12:00", "update_after_minutes": UPDATE_AFTER},
-    {"lottery": "La Nacional", "draw": "Loteria Nacional- Gana Mas",  "time": "14:30", "update_after_minutes": UPDATE_AFTER},
-    {"lottery": "La Nacional", "draw": "Loteria Nacional- Noche",     "time": "21:00", "update_after_minutes": UPDATE_AFTER},
-    # v6: La Suerte como fuente de prior_pairs
-    {"lottery": "La Suerte",   "draw": "Quiniela La Suerte",         "time": "12:30", "update_after_minutes": UPDATE_AFTER},
-    {"lottery": "La Suerte",   "draw": "Quiniela La Suerte 6PM",     "time": "18:00", "update_after_minutes": UPDATE_AFTER},
+    {"lottery": "Anguilla",    "draw": "Anguila 1PM",                  "time": "13:00", "update_after_minutes": UPDATE_AFTER},
+    {"lottery": "Anguilla",    "draw": "Anguila 6PM",                  "time": "18:00", "update_after_minutes": UPDATE_AFTER},
+    {"lottery": "Anguilla",    "draw": "Anguila 9PM",                  "time": "21:00", "update_after_minutes": UPDATE_AFTER},
+    {"lottery": "La Primera",  "draw": "Quiniela La Primera",          "time": "12:00", "update_after_minutes": UPDATE_AFTER},
+    {"lottery": "La Nacional", "draw": "Loteria Nacional- Gana Más",   "time": "14:30", "update_after_minutes": UPDATE_AFTER},  # v6.3: tilde
+    {"lottery": "La Nacional", "draw": "Loteria Nacional- Noche",      "time": "21:00", "update_after_minutes": UPDATE_AFTER},
+    # v6: La Suerte como fuente de prior_pairs (sync-only via LOTMIX)
+    {"lottery": "La Suerte",   "draw": "Quiniela La Suerte",           "time": "12:30", "update_after_minutes": UPDATE_AFTER},
+    {"lottery": "La Suerte",   "draw": "Quiniela La Suerte 6PM",       "time": "18:00", "update_after_minutes": UPDATE_AFTER},
 ]
 
 NOTIFY_DRAWS: set[str] = {
     "Anguila 1PM", "Anguila 6PM", "Anguila 9PM",
     "Quiniela La Primera",
-    "Loteria Nacional- Gana Mas", "Loteria Nacional- Noche",
+    "Loteria Nacional- Gana Más", "Loteria Nacional- Noche",  # v6.3: tilde
 }
 
 # ---------------------------------------------------------------------------
@@ -411,7 +419,6 @@ def compute_max_days_back() -> int:
             continue
         mask = df["sorteo"] == draw
         if not mask.any():
-            # Draw no tiene filas — podria ser nuevo; usar gap minimo
             print(f"[INFO] Sin filas para {draw} en XLSX — usando gap=7")
             max_gap = max(max_gap, 7)
             continue
@@ -461,7 +468,7 @@ def try_update_one(item: dict, state: dict) -> bool:
 def _missing_for_date(date_str: str) -> list[dict]:
     n = now_rd()
     today = today_str()
-    # Solo backfillear draws de lotteries backfilleables
+    # Solo backfillear draws de lotteries backfilleables (no sync-only)
     return [item for item in SCHEDULE
             if item["lottery"] in BACKFILL_LOTTERIES
             and not (date_str == today and not _is_due(item, n))
@@ -534,6 +541,7 @@ def force_refresh_backfill(state: dict, days_back: int = 7,
 
 # ===========================================================================
 # Gates
+# v6.3: SYNC_ONLY_LOTTERIES excluidas del gate — no deben bloquear picks
 # ===========================================================================
 
 def missing_due_updates_before_target(target_dt: datetime) -> list[str]:
@@ -542,7 +550,8 @@ def missing_due_updates_before_target(target_dt: datetime) -> list[str]:
     return [
         f"{item['lottery']} | {item['draw']} (due {_due_dt(item).strftime('%H:%M')})"
         for item in SCHEDULE
-        if draw_datetime_today(item).date() == target_dt.date()
+        if item["lottery"] not in SYNC_ONLY_LOTTERIES        # v6.3: excluir sync-only
+        and draw_datetime_today(item).date() == target_dt.date()
         and draw_datetime_today(item) < target_dt
         and _is_due(item, n)
         and not _has_row_for_date(item["lottery"], item["draw"], date_str)
@@ -932,8 +941,6 @@ def _send_pick_telegram(
     if decision == "NO JUGAR" and not FORCE_NOTIFY:
         print(f"[INFO] {target['draw']} -> NO JUGAR (sin notificacion).")
         return
-
-    nivel_icono = "F" if "OPTIMA" in decision else "V"
 
     lines = [
         f"APEX6",
