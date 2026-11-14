@@ -1,44 +1,44 @@
 {
-  "generated_at": "2026-11-13T12:17:40.799856-04:00",
-  "event_key": "2026-11-13|La Primera|Quiniela La Primera",
+  "generated_at": "2026-11-14T12:17:17.184995-04:00",
+  "event_key": "2026-11-14|PRE|Anguilla|Anguila 1PM",
   "items": [
     {
-      "generated_at": "2026-11-13T12:17:40.756885-04:00",
-      "event_key": "2026-11-13|La Primera|Quiniela La Primera",
+      "generated_at": "2026-11-14T12:17:17.142829-04:00",
+      "event_key": "2026-11-14|PRE|Anguilla|Anguila 1PM",
       "target": {
-        "time_rd": "2026-11-13 13:00",
+        "time_rd": "2026-11-14 13:00",
         "lottery": "Anguilla",
         "draw": "Anguila 1PM"
       },
       "best_play": {
-        "time_rd": "2026-11-13 13:00",
+        "time_rd": "2026-11-14 13:00",
         "lottery": "Anguilla",
         "draw": "Anguila 1PM",
         "top12": [
-          "26",
+          "27",
+          "01",
+          "05",
+          "56",
+          "82",
+          "29",
+          "52",
           "60",
           "65",
           "54",
-          "59",
           "94",
-          "83",
-          "52",
-          "08",
-          "81",
-          "62",
-          "42"
+          "62"
         ],
         "topq": [
-          "26",
-          "60",
-          "65"
+          "27",
+          "01",
+          "05"
         ],
         "pales": [
-          "26-60",
-          "26-65",
-          "26-54"
+          "01-27",
+          "05-27",
+          "27-56"
         ],
-        "fingerprint": "ebcad6ce6311124a",
+        "fingerprint": "71eb6f24244fc16c",
         "decision": "NO JUGAR",
         "best_signal": 0.010201503644498157,
         "best_a11": 1,
@@ -46,18 +46,18 @@
           "today_observed_nums": 3,
           "source_pairs_today": 2,
           "source_rows_hist_used": 534,
-          "top12_overlap_prev": 5,
+          "top12_overlap_prev": 6,
           "top_intraday": [
             [
-              "61",
+              "22",
               1
             ],
             [
-              "86",
+              "12",
               1
             ],
             [
-              "82",
+              "67",
               1
             ]
           ]
