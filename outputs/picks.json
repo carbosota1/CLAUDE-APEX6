@@ -1,39 +1,39 @@
 {
-  "generated_at": "2026-11-15T15:02:27.379381-04:00",
-  "event_key": "2026-11-15|La Nacional|Loteria Nacional- Gana Más",
+  "generated_at": "2026-11-15T18:17:21.050511-04:00",
+  "event_key": "2026-11-15|La Nacional|Loteria Nacional- Noche",
   "date": "2026-11-15",
   "picks": [
     {
-      "lottery": "La Nacional",
-      "draw": "Loteria Nacional- Noche",
-      "time_rd": "2026-11-15 18:00",
-      "decision": "NO JUGAR",
+      "lottery": "Anguilla",
+      "draw": "Anguila 9PM",
+      "time_rd": "2026-11-15 21:00",
+      "decision": "SENAL OPTIMA",
       "topq": [
-        "72",
-        "73",
-        "37"
+        "99",
+        "03",
+        "55"
       ],
       "top12": [
-        "72",
-        "73",
-        "37",
-        "66",
-        "28",
-        "59",
-        "05",
-        "32",
-        "81",
-        "76",
-        "48",
-        "80"
+        "99",
+        "03",
+        "55",
+        "18",
+        "24",
+        "46",
+        "53",
+        "83",
+        "06",
+        "63",
+        "67",
+        "05"
       ],
       "pales": [
-        "72-73",
-        "37-72",
-        "66-72"
+        "03-99",
+        "55-99",
+        "18-99"
       ],
-      "best_signal": 0.021264519122534378,
-      "best_a11": 2
+      "best_signal": 0.009378796964804046,
+      "best_a11": 3
     }
   ]
 }
