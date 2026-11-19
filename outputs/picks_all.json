@@ -1,141 +1,63 @@
 {
-  "generated_at": "2026-11-18T18:17:27.764454-04:00",
-  "event_key": "2026-11-18|Anguilla|Anguila 6PM",
+  "generated_at": "2026-11-19T12:17:33.581163-04:00",
+  "event_key": "2026-11-19|La Primera|Quiniela La Primera",
   "items": [
     {
-      "generated_at": "2026-11-18T18:17:17.150236-04:00",
-      "event_key": "2026-11-18|Anguilla|Anguila 6PM",
+      "generated_at": "2026-11-19T12:17:33.537107-04:00",
+      "event_key": "2026-11-19|La Primera|Quiniela La Primera",
       "target": {
-        "time_rd": "2026-11-18 21:00",
+        "time_rd": "2026-11-19 13:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 9PM"
+        "draw": "Anguila 1PM"
       },
       "best_play": {
-        "time_rd": "2026-11-18 21:00",
+        "time_rd": "2026-11-19 13:00",
         "lottery": "Anguilla",
-        "draw": "Anguila 9PM",
+        "draw": "Anguila 1PM",
         "top12": [
-          "99",
+          "06",
+          "52",
+          "60",
+          "33",
+          "41",
+          "65",
           "12",
-          "28",
-          "95",
-          "98",
-          "05",
-          "02",
-          "45",
-          "20",
-          "18",
-          "03",
-          "72"
-        ],
-        "topq": [
-          "99",
-          "12",
-          "28"
-        ],
-        "pales": [
-          "12-99",
-          "28-99",
-          "95-99"
-        ],
-        "fingerprint": "ae2aa8d1124782d0",
-        "decision": "NO JUGAR",
-        "best_signal": 0.00742658640587845,
-        "best_a11": 5,
-        "debug": {
-          "today_observed_nums": 11,
-          "source_pairs_today": 6,
-          "source_rows_hist_used": 1853,
-          "top12_overlap_prev": 2,
-          "top_intraday": [
-            [
-              "28",
-              2
-            ],
-            [
-              "14",
-              1
-            ],
-            [
-              "99",
-              1
-            ],
-            [
-              "75",
-              1
-            ],
-            [
-              "13",
-              1
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "generated_at": "2026-11-18T18:17:21.761635-04:00",
-      "event_key": "2026-11-18|Anguilla|Anguila 6PM",
-      "target": {
-        "time_rd": "2026-11-18 21:00",
-        "lottery": "La Nacional",
-        "draw": "Loteria Nacional- Noche"
-      },
-      "best_play": {
-        "time_rd": "2026-11-18 21:00",
-        "lottery": "La Nacional",
-        "draw": "Loteria Nacional- Noche",
-        "top12": [
-          "75",
-          "48",
-          "13",
-          "83",
-          "16",
+          "08",
+          "42",
           "14",
-          "35",
-          "37",
-          "79",
-          "21",
-          "61",
-          "64"
+          "13",
+          "83"
         ],
         "topq": [
-          "75",
-          "48",
-          "13"
+          "06",
+          "52",
+          "60"
         ],
         "pales": [
-          "48-75",
-          "13-75",
-          "75-83"
+          "06-52",
+          "06-60",
+          "06-33"
         ],
-        "fingerprint": "9ddaa63b182e4866",
-        "decision": "SENAL OPTIMA",
-        "best_signal": 0.005882727281111491,
-        "best_a11": 3,
+        "fingerprint": "bc8ba4768438c9f7",
+        "decision": "NO JUGAR",
+        "best_signal": 0.010201503644498157,
+        "best_a11": 1,
         "debug": {
-          "today_observed_nums": 11,
-          "source_pairs_today": 6,
-          "source_rows_hist_used": 1853,
-          "top12_overlap_prev": 0,
+          "today_observed_nums": 3,
+          "source_pairs_today": 2,
+          "source_rows_hist_used": 534,
+          "top12_overlap_prev": 3,
           "top_intraday": [
             [
-              "28",
-              2
-            ],
-            [
-              "14",
+              "92",
               1
             ],
             [
-              "99",
+              "87",
               1
             ],
             [
-              "75",
-              1
-            ],
-            [
-              "13",
+              "43",
               1
             ]
           ]
